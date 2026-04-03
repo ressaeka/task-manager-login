@@ -6,7 +6,7 @@
 [![JWT](https://img.shields.io/badge/JWT-Auth-purple.svg)](https://jwt.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 📋 Deskripsi
+## Deskripsi
 
 Task Manager API adalah backend RESTful API untuk aplikasi manajemen task (todo list) dengan sistem authentication dan authorization berbasis role (User & Admin). Dibangun menggunakan **Node.js, Express, dan PostgreSQL** dengan arsitektur MVC yang bersih dan scalable.
 
@@ -59,7 +59,7 @@ Task Manager API adalah backend RESTful API untuk aplikasi manajemen task (todo 
 - **Formatting:** Prettier
 - **Version Control:** Git
 
-## 🚀 Cara Install & Menjalankan
+## Cara Install & Menjalankan
 
 ### Prerequisites
 - Node.js v18+
