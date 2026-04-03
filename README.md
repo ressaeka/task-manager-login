@@ -10,8 +10,6 @@
 
 Task Manager API adalah backend RESTful API untuk aplikasi manajemen task (todo list) dengan sistem authentication dan authorization berbasis role (User & Admin). Dibangun menggunakan **Node.js, Express, dan PostgreSQL** dengan arsitektur MVC yang bersih dan scalable.
 
-> 🚀 **Status Project**: Production Ready - Siap untuk dideploy dan digunakan!
-
 ## Fitur 
 
 ### Authentication & Authorization
@@ -60,24 +58,6 @@ Task Manager API adalah backend RESTful API untuk aplikasi manajemen task (todo 
 - **Linting:** ESLint
 - **Formatting:** Prettier
 - **Version Control:** Git
-
-## Struktur Project
-
-task-manager-api/
-├── src/
-│ ├── config/ # Database configuration
-│ ├── controllers/ # Request handlers
-│ ├── middlewares/ # Auth, admin, error handler
-│ ├── models/ # Database queries
-│ ├── routes/ # API routes
-│ ├── services/ # Business logic
-│ ├── utils/ # Helper functions
-│ └── validators/ # Input validation
-├── tests/ # Unit & integration tests
-├── .env.example # Environment variables template
-├── .gitignore
-├── package.json
-└── README.md
 
 ## 🚀 Cara Install & Menjalankan
 
