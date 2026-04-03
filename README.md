@@ -1,46 +1,95 @@
-# Task manager API
+# Task Manager API
 
-## Deskripsi
+[![Node.js](https://img.shields.io/badge/Node.js-18.x-green.svg)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-4.x-blue.svg)](https://expressjs.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14.x-orange.svg)](https://www.postgresql.org/)
+[![JWT](https://img.shields.io/badge/JWT-Auth-purple.svg)](https://jwt.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Task Manager API adalah backend RESTful API untuk aplikasi manajemen task (todo list) 
-dengan sistem authentication dan authorization berbasis role (User & Admin). 
-Dibangun menggunakan **Node.js, Express, dan PostgreSQL** dengan arsitektur MVC 
-yang bersih dan scalable.
+## 📋 Deskripsi
 
-## Fitur
+Task Manager API adalah backend RESTful API untuk aplikasi manajemen task (todo list) dengan sistem authentication dan authorization berbasis role (User & Admin). Dibangun menggunakan **Node.js, Express, dan PostgreSQL** dengan arsitektur MVC yang bersih dan scalable.
 
-- Register & Login user
-- Password hashing dengan bcrypt
-- CRUD tasks
-- Testing dengan jest & superjest
-- authentication JWT (Coming soon)
+> 🚀 **Status Project**: Production Ready - Siap untuk dideploy dan digunakan!
+
+## Fitur 
+
+### Authentication & Authorization
+- ✅ Register & Login dengan JWT
+- ✅ Password hashing dengan bcrypt
+- ✅ Role-based access (User & Admin)
+- ✅ Middleware untuk proteksi route
+
+### Task Management (User)
+- ✅ Create task baru
+- ✅ Read semua task milik sendiri (dengan pagination)
+- ✅ Read detail task by ID
+- ✅ Update task (title, description, status)
+- ✅ Delete task
+- ✅ Filter tasks by status (pending, in-progress, done)
+- ✅ Validasi input task
+
+### Admin Dashboard
+- ✅ Manage semua users (CRUD)
+- ✅ Manage semua tasks (Read only)
+- ✅ Search users by username
+- ✅ Filter users by role (user/admin)
+- ✅ Filter tasks by status
+- ✅ Pagination untuk users & tasks
+- ✅ Create admin baru
+
+###  Security Features
+- ✅ JWT token dengan expiry
+- ✅ Input validation
+- ✅ SQL injection protection (parameterized queries)
+- ✅ Error handling global
+- ✅ Environment variables
 
 ## Tech Stack
 
-- Node.js
-- Express
-- PostgreSQL (Coming soon)
-- jest
+### Backend
+- **Runtime:** Node.js
+- **Framework:** Express.js
+- **Database:** PostgreSQL
+- **Authentication:** JWT (JSON Web Tokens)
+- **Password:** bcrypt
+- **Validation:** Custom validators
 
-## Cara Menjalankan
+### Tools & Testing
+- **Testing:** Jest & Supertest
+- **Linting:** ESLint
+- **Formatting:** Prettier
+- **Version Control:** Git
 
-- Clone Repo
-- Install dependencies - npm install
-- Jalankan server - npm run start
+## Struktur Project
 
-### Auth Users
+task-manager-api/
+├── src/
+│ ├── config/ # Database configuration
+│ ├── controllers/ # Request handlers
+│ ├── middlewares/ # Auth, admin, error handler
+│ ├── models/ # Database queries
+│ ├── routes/ # API routes
+│ ├── services/ # Business logic
+│ ├── utils/ # Helper functions
+│ └── validators/ # Input validation
+├── tests/ # Unit & integration tests
+├── .env.example # Environment variables template
+├── .gitignore
+├── package.json
+└── README.md
 
-- POST /Auth/register
-- POST /Auth/login
-- POST /Auth/logout
+## 🚀 Cara Install & Menjalankan
 
-## tasks
+### Prerequisites
+- Node.js v18+
+- PostgreSQL v14+
+- npm atau yarn
 
-- GET /tasks
-- POST /tasks
-- PUT /tasks/:id
-- DELETE tasks/:id
+### Langkah-langkah
 
-## Testing
-
-Jalankan : npm test / npx test
+1. **Clone repository**
+```bash
+git clone https://github.com/username/task-manager-api.git
+cd task-manager-api
+```
