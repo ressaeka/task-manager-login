@@ -24,7 +24,7 @@ yang bersih dan scalable.
 
 ## Cara Menjalankan
 
-- Clone Repo, Tapi sekarang masih distaging area local, belum di up public
+- Clone Repo
 - Install dependencies - npm install
 - Jalankan server - npm run start
 
