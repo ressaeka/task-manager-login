@@ -85,7 +85,7 @@ export const countTotalTasks = async (status = null) => {
   return parseInt(result.rows[0].count);
 };
 
-// ============= DASHBOARD STATS =============
+// DASHBOARD STATS 
 export const countPendingTasks = async () => {
   const result = await pool.query(
     `SELECT COUNT(*) FROM tasks WHERE status = 'pending'`
