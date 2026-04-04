@@ -123,21 +123,6 @@ export const countActiveUsersToday = async () => {
   return parseInt(result.rows[0].count);
 };
 
-// 
-export const countTotalRegularUsers = async () => {
-  const result = await pool.query(
-    `SELECT COUNT(*) FROM users WHERE role = 'user'`
-  );
-  return parseInt(result.rows[0].count);
-};
-
-export const countTotalAdmins = async () => {
-  const result = await pool.query(
-    `SELECT COUNT(*) FROM users WHERE role = 'admin'`
-  );
-  return parseInt(result.rows[0].count);
-};
-
 // DELETE USER
 export const deleteUserById = async (userId) => {
   const result = await pool.query(

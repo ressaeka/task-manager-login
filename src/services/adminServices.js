@@ -9,9 +9,6 @@ import {
   countCompletedTasks,
   countNewUsersLast7Days,
   countActiveUsersToday,
-  countTotalRegularUsers,
-  countTotalAdmins,
-
 } from "../models/adminModel.js";
 import { 
   findUserById as findUserByIdModel, 
@@ -121,7 +118,7 @@ export const getDashboardStatsService = async () => {
     countInProgressTasks(),
     countCompletedTasks(),
     countNewUsersLast7Days(),
-    countActiveUsersToday()
+    countActiveUsersToday(),
   ]);
 
   const totalAccounts = totalRegularUsers + totalAdmins;
