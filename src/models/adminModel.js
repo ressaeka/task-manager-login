@@ -59,7 +59,7 @@ export const findAllTasksPaginated = async (limit, offset, status = null) => {
   const values = [];
   let paramCount = 1;  
 
-  // 🔥 FILTER BY STATUS
+  // FILTER BY STATUS
   if (status) {
     query += ` AND t.status = $${paramCount}`;  
     values.push(status);
