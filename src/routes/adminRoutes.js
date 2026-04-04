@@ -5,7 +5,8 @@ import {
   deleteUser,
   createAdmin,
   getUserById,
-  getUserByUsername
+  getUserByUsername,
+  getDashboardStats
 } from "../controllers/adminController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { adminMiddleware } from "../middlewares/adminMiddleware.js";
@@ -18,18 +19,21 @@ router.use(adminMiddleware);
 
 // ROUTES 
 
-// 1. CREATE ADMIN
+// CREATE ADMIN
 router.post("/create/admins", createAdmin); 
 
-// 2. USER ROUTES 
+// USER ROUTES 
 router.get("/users/username/:username", getUserByUsername);  // by username
 router.get("/users/:id", getUserById);                       // by id
 router.get("/users", getAllUsers);                           // all users
 
-// 3. TASK ROUTES
+// TASK ROUTES
 router.get("/tasks", getAllTasks);
 
-// 4. DELETE USER
+// ADMIN DASHBOARD STATS
+router.get("/dashboard", authMiddleware, adminMiddleware, getDashboardStats);
+
+// DELETE USER
 router.delete("/users/:id", deleteUser);
 
 export default router;

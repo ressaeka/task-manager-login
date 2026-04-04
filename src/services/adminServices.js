@@ -3,7 +3,15 @@ import {
   findAllUsersPaginated, 
   countTotalUsers, 
   countTotalTasks,
-  deleteUserById 
+  deleteUserById,
+  countPendingTasks,
+  countInProgressTasks,
+  countCompletedTasks,
+  countNewUsersLast7Days,
+  countActiveUsersToday,
+  countTotalRegularUsers,
+  countTotalAdmins,
+
 } from "../models/adminModel.js";
 import { 
   findUserById as findUserByIdModel, 
@@ -39,7 +47,7 @@ export const getAllUsersService = async (page = 1, limit = 10, role = null) => {
   const offset = (page - 1) * limit;
 
   const users = await findAllUsersPaginated(limit, offset, role);
-  const total = await countTotalUsers();
+  const total = await countTotalUsers(role);  
 
   return {
     users, 
@@ -64,7 +72,7 @@ export const findUserByUsername = async (username) => {
   return user;
 };
 
-//FIND USER BY ID 
+// FIND USER BY ID 
 export const findUserById = async (userId) => {
   const user = await findUserByIdModel(userId);
 
@@ -77,23 +85,64 @@ export const findUserById = async (userId) => {
 
 // GET ALL TASKS WITH PAGINATION
 export const getAllTasksService = async (page = 1, limit = 10, status = null) => {
-  const offset = (page - 1 ) * limit;
+  const offset = (page - 1) * limit;
 
-  const tasks = await findAllTasksPaginated(limit, offset, status)
-  const total = await countTotalTasks()
- 
+  const tasks = await findAllTasksPaginated(limit, offset, status);
+  const total = await countTotalTasks(status);  
 
   return {
     tasks,
-    pagination : {
+    pagination: {
       page,
       limit,
-      totalPages : Math.ceil(total / limit),
-      ...(status &&{ filter: { status } })
+      total,
+      totalPages: Math.ceil(total / limit),
+      ...(status && { filter: { status } })
     }
-  }
+  };
+};
 
-}
+// DASHBOARD STATS SERVICE 
+export const getDashboardStatsService = async () => {
+  const [
+    totalRegularUsers,  
+    totalAdmins,        
+    totalTasks,
+    pendingTasks,
+    inProgressTasks,
+    completedTasks,
+    newUsersLast7Days,
+    activeUsersToday
+  ] = await Promise.all([
+    countTotalUsers('user'),     
+    countTotalUsers('admin'),  
+    countTotalTasks(),
+    countPendingTasks(),
+    countInProgressTasks(),
+    countCompletedTasks(),
+    countNewUsersLast7Days(),
+    countActiveUsersToday()
+  ]);
+
+  const totalAccounts = totalRegularUsers + totalAdmins;
+
+  const completionRate = totalTasks > 0 
+    ? Math.round((completedTasks / totalTasks) * 100) 
+    : 0;
+
+  return {
+    totalUsers: totalRegularUsers, 
+    totalAdmins: totalAdmins,       
+    totalAccounts: totalAccounts,   
+    totalTasks,
+    pendingTasks,
+    inProgressTasks,
+    completedTasks,
+    completionRate,
+    newUsersLast7Days,
+    activeUsersToday
+  };
+};
 
 // DELETE USER
 export const deleteUserService = async (userId) => {

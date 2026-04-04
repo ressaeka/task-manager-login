@@ -1,8 +1,9 @@
 import {
-  getAllTasksService,
-  getAllUsersService,
-  deleteUserService,
   createAdminService,
+  getAllUsersService,
+  getAllTasksService,
+  getDashboardStatsService,
+  deleteUserService,
 } from "../services/adminServices.js";
 
 import { findUserById, findUserByUsername } from "../models/usersModel.js"; 
@@ -38,10 +39,7 @@ export const getUserByUsername = async (req, res) => {
 
     const user = await findUserByUsername(username)
 
-    return successResponse(res, {
-      user
-    }, "Berhasil mengambil user", 200)
-
+    return successResponse(res, { user }, "Berhasil mengambil user", 200)
   } catch(err){
     if(err.message === "User tidak ditemukan"){
         return errorResponse(res, err.message, 404);
@@ -65,9 +63,7 @@ export const getUserById = async (req, res) => {
       return errorResponse(res, "User tidak ditemukan", 404);
     }
 
-    return successResponse(res, { 
-      user 
-    }, "Berhasil mengambil user", 200);
+    return successResponse(res, { user }, "Berhasil mengambil user", 200);
   } catch(err) {
     return serverErrorResponse(res, err.message, 500);
   }
@@ -101,29 +97,39 @@ export const getAllUsers = async (req, res) => {
 // GET ALL TASKS 
 export const getAllTasks = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1
-    const limit = parseInt(req.query.limit) || 10
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
     const status = req.query.status;
 
     if(page < 1) {
-      return errorResponse(res, "Page minimal 1", 400)
+      return errorResponse(res, "Page minimal 1", 400);
     }
 
     if(limit < 1 || limit > 100){
-      return errorResponse(res, "Limit minimal 1 dan maksimal 100", 400)
+      return errorResponse(res, "Limit minimal 1 dan maksimal 100", 400);
     }
     if(status && !['pending', 'in-progress', 'done'].includes(status)){
-      return errorResponse(res, "Status harus pending, in-progress, atau done")
+      return errorResponse(res, "Status harus pending, in-progress, atau done", 400);
     }
 
     const result = await getAllTasksService(page, limit, status);
 
-    return successResponse(res, result, "Berhasil mengambil semua tasks", 200)
-  }catch (err) {
+    return successResponse(res, result, "Berhasil mengambil semua tasks", 200);
+  } catch (err) {
     return serverErrorResponse(res, err.message, 500);
   }
-}
+};
 
+// GET DASHBOARD STATS
+export const getDashboardStats = async (req, res) => {
+  try {
+    const stats = await getDashboardStatsService();
+    
+    return successResponse(res, { stats }, "Berhasil mengambil dashboard stats", 200);
+  } catch (err) {
+    return serverErrorResponse(res, err.message, 500);
+  }
+};
 
 // DELETE USER
 export const deleteUser = async (req, res) => {

@@ -59,7 +59,6 @@ export const findAllTasksPaginated = async (limit, offset, status = null) => {
   const values = [];
   let paramCount = 1;  
 
-  // FILTER BY STATUS
   if (status) {
     query += ` AND t.status = $${paramCount}`;  
     values.push(status);
@@ -83,6 +82,59 @@ export const countTotalTasks = async (status = null) => {
   }
 
   const result = await pool.query(query, values);
+  return parseInt(result.rows[0].count);
+};
+
+// ============= DASHBOARD STATS =============
+export const countPendingTasks = async () => {
+  const result = await pool.query(
+    `SELECT COUNT(*) FROM tasks WHERE status = 'pending'`
+  );
+  return parseInt(result.rows[0].count);
+};
+
+export const countInProgressTasks = async () => {
+  const result = await pool.query(
+    `SELECT COUNT(*) FROM tasks WHERE status = 'in-progress'`
+  );
+  return parseInt(result.rows[0].count);
+};
+
+export const countCompletedTasks = async () => {
+  const result = await pool.query(
+    `SELECT COUNT(*) FROM tasks WHERE status = 'done'`
+  );
+  return parseInt(result.rows[0].count);
+};
+
+export const countNewUsersLast7Days = async () => {
+  const result = await pool.query(
+    `SELECT COUNT(*) FROM users
+     WHERE created_at >= NOW() - INTERVAL '7 days'`
+  );
+  return parseInt(result.rows[0].count);
+};
+
+export const countActiveUsersToday = async () => {
+  const result = await pool.query(
+    `SELECT COUNT(DISTINCT user_id) FROM tasks
+     WHERE created_at >= CURRENT_DATE`
+  );
+  return parseInt(result.rows[0].count);
+};
+
+// 
+export const countTotalRegularUsers = async () => {
+  const result = await pool.query(
+    `SELECT COUNT(*) FROM users WHERE role = 'user'`
+  );
+  return parseInt(result.rows[0].count);
+};
+
+export const countTotalAdmins = async () => {
+  const result = await pool.query(
+    `SELECT COUNT(*) FROM users WHERE role = 'admin'`
+  );
   return parseInt(result.rows[0].count);
 };
 
