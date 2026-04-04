@@ -11,10 +11,10 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 // TASKS
-router.post("/createTasks", authMiddleware, createTask);
-router.get("/getTasks", authMiddleware, getTasks);
-router.get("/getTasks/:id", authMiddleware, getTaskById);  
-router.put("/updateTasks/:id", authMiddleware, updateTask);
-router.delete("/deleteTasks/:id", authMiddleware, deleteTask);
+router.post("/tasks", authMiddleware, createTask);
+router.get("/tasks", authMiddleware, getTasks);
+router.get("/tasks/:id", authMiddleware, getTaskById);  
+router.put("/tasks/:id", authMiddleware, updateTask);
+router.delete("/asks/:id", authMiddleware, deleteTask);
 
 export default router;

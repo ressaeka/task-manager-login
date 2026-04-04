@@ -22,14 +22,14 @@ router.use(adminMiddleware);
 router.post("/create/admins", createAdmin); 
 
 // 2. USER ROUTES 
-router.get("/getUsers/username/:username", getUserByUsername);  // by username
-router.get("/getUsers/:id", getUserById);                       // by id
-router.get("/getUsers", getAllUsers);                           // all users
+router.get("/users/username/:username", getUserByUsername);  // by username
+router.get("/users/:id", getUserById);                       // by id
+router.get("/users", getAllUsers);                           // all users
 
 // 3. TASK ROUTES
-router.get("/getTasks", getAllTasks);
+router.get("/tasks", getAllTasks);
 
 // 4. DELETE USER
-router.delete("/deletUsers/:id", deleteUser);
+router.delete("/users/:id", deleteUser);
 
 export default router;
