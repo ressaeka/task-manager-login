@@ -11,6 +11,7 @@ import {
 import { validateAuth } from "../validators/index.js";
 
 
+
 export const register = async (req, res) => {
   try {
     const { username, password } = req.body;

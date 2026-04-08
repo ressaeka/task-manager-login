@@ -10,10 +10,12 @@ import {
 } from "../controllers/adminController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { adminMiddleware } from "../middlewares/adminMiddleware.js";
+import { adminLimiter } from "../middlewares/rateLimiter.js";
 
 const router = express.Router();
 
 // apply ke semua route
+router.use(adminLimiter);
 router.use(authMiddleware);
 router.use(adminMiddleware);
 
