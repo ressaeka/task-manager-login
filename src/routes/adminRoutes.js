@@ -6,7 +6,9 @@ import {
   createAdmin,
   getUserById,
   getUserByUsername,
-  getDashboardStats
+  getDashboardStats,
+  softDeleteUser,
+  restoreUser
 } from "../controllers/adminController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { adminMiddleware } from "../middlewares/adminMiddleware.js";
@@ -37,5 +39,9 @@ router.get("/dashboard", authMiddleware, adminMiddleware, getDashboardStats);
 
 // DELETE USER
 router.delete("/users/:id", deleteUser);
+
+// DELETE USER ( SOFT DELETE )
+router.delete("/users/:id/soft", authMiddleware, adminMiddleware, softDeleteUser)
+router.post("/users/:id/restore", authMiddleware, adminMiddleware, restoreUser);
 
 export default router;

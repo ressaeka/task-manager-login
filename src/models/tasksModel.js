@@ -67,7 +67,7 @@ export const countTasksByUserId = async (userId, status=null) => {
 // FIND TASK BY ID + USER
 export const findTaskById = async (taskId, userId) => {
   const result = await pool.query(
-    `SELECT id, public_id, title, description, status, created_at, updated_at
+    `SELECT id, public_id, title, description, status, created_at, updated_at, deleted_at , expires_at
      FROM tasks
      WHERE id = $1 AND user_id = $2`,
     [taskId, userId],

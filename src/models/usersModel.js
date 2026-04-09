@@ -25,7 +25,7 @@ export const findUserByUsername = async (username) => {
 // FIND USER BY ID (untuk profile & admin)
 export const findUserById = async (id) => {
   const result = await pool.query(
-    `SELECT id, public_id, username, password, role, created_at 
+    `SELECT id, public_id, username, password, role, created_at, deleted_at, expires_at
      FROM users 
      WHERE id = $1`,
     [id]

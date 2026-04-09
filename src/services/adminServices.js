@@ -9,6 +9,8 @@ import {
   countCompletedTasks,
   countNewUsersLast7Days,
   countActiveUsersToday,
+  softDeleteUserById,
+  restoreUserById
 } from "../models/adminModel.js";
 import { 
   findUserById as findUserByIdModel, 
@@ -151,3 +153,38 @@ export const deleteUserService = async (userId) => {
 
   return await deleteUserById(userId);
 };
+
+// SOFT DELETE USER 
+export const softDeleteUserService = async (userId) => {
+  const user = await findUserByIdModel(userId);
+
+  if(!user){
+    throw new Error("User tidak di temukan")
+  }
+
+  if(user.deleted_at){
+    throw new Error("User sudah di hapus")
+  }
+
+  return await softDeleteUserById(userId)
+};
+
+//RESTORE USER 
+export const restoreUserService = async (userId) => {
+  const user = await findUserByIdModel(userId)
+
+  console.log("USER DATA:", user);
+  console.log("deleted_at value:", user.deleted_at);
+  console.log("deleted_at type:", typeof user.deleted_at)
+
+  if(!user){
+    throw new Error("User tidak di temukan")
+  }
+
+  if(!user.deleted_at){
+    throw new Error("User masih aktif, tidak perlu di restore")
+  }
+
+  return await restoreUserById(userId)
+};
+

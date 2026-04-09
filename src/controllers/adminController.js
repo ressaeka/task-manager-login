@@ -4,6 +4,8 @@ import {
   getAllTasksService,
   getDashboardStatsService,
   deleteUserService,
+  softDeleteUserService,
+  restoreUserService
 } from "../services/adminServices.js";
 
 import { findUserById, findUserByUsername } from "../models/usersModel.js"; 
@@ -144,5 +146,40 @@ export const deleteUser = async (req, res) => {
     return successResponse(res, null, "User berhasil dihapus", 200);
   } catch (err) {
     return errorResponse(res, err.message, 400);
+  }
+};
+
+// SOFT DELETE USER
+export const softDeleteUser = async (req, res) => {
+  try {
+    const userId = Number(req.params.id)
+
+    if(isNaN(userId) || userId <= 0) {
+      return errorResponse(res, "ID user tidak valid", 400);
+    }
+    
+    await softDeleteUserService(userId)  
+    return successResponse(res, null, "User berhasil dihapus (soft delete)", 200)
+    
+  } catch (err) {
+    return errorResponse(res, err.message, 400)
+  }
+};
+
+// RESTORE USER
+export const restoreUser = async (req, res) => {
+  try {
+    const userId = Number(req.params.id);
+    console.log(req.params.id)
+
+    if(isNaN(userId) || userId <= 0){
+      return errorResponse(res, "ID user tidak valid", 400);
+    }
+
+    await restoreUserService(userId);  
+    return successResponse(res, null, "User berhasil di restore", 200)
+    
+  } catch (err){
+    return errorResponse(res, err.message, 400)
   }
 };

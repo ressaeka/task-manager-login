@@ -16,8 +16,8 @@ export const findAllUsersPaginated = async (limit, offset, role = null) => {
   let query = `
     SELECT id, public_id, username, role, created_at
     FROM users
-    WHERE 1=1
-  `;
+    WHERE deleted_at IS NULL
+`;
   const values = [];
   let paramCount = 1;
 
@@ -35,7 +35,7 @@ export const findAllUsersPaginated = async (limit, offset, role = null) => {
 };
 
 export const countTotalUsers = async (role = null) => {
-  let query = `SELECT COUNT(*) FROM users WHERE 1=1`;
+  let query = `SELECT COUNT(*) FROM users WHERE deleted_at IS NULL`;
   const values = [];
 
   if (role) {
@@ -132,4 +132,78 @@ export const deleteUserById = async (userId) => {
     [userId]
   );
   return result.rows[0] ?? null;
+};
+
+// SOFT DELETE
+export const softDeleteUserById = async (userId) => {
+  const client = await pool.connect();
+  
+  try {
+    await client.query('BEGIN');
+    
+    // Soft delete tasks user +  expiry 30 hari
+    await client.query(
+      `UPDATE tasks SET 
+        deleted_at = NOW(),
+        expires_at = NOW() + INTERVAL '30 days'
+       WHERE user_id = $1 AND deleted_at IS NULL`,
+      [userId]
+    );
+    
+    // Soft delete user + expiry 30 hari
+    const result = await client.query(
+      `UPDATE users SET 
+        deleted_at = NOW(),
+        expires_at = NOW() + INTERVAL '30 days'
+       WHERE id = $1 AND deleted_at IS NULL
+       RETURNING id, public_id, username, role, deleted_at, expires_at`,
+      [userId]
+    );
+    
+    await client.query('COMMIT');
+    return result.rows[0] ?? null;
+    
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+// RESTORE USER 
+export const restoreUserById = async (userId) => {
+  const client = await pool.connect();
+  
+  try {
+    await client.query('BEGIN');
+    
+    // Restore tasks user + reset expires_at
+    await client.query(
+      `UPDATE tasks SET 
+        deleted_at = NULL,
+        expires_at = NULL
+       WHERE user_id = $1 AND deleted_at IS NOT NULL`,
+      [userId]
+    );
+    
+    // Restore user + reset expires_at
+    const result = await client.query(
+      `UPDATE users SET 
+        deleted_at = NULL,
+        expires_at = NULL
+       WHERE id = $1
+       RETURNING id, public_id, username, role`,
+      [userId]
+    );
+    
+    await client.query('COMMIT');
+    return result.rows[0] ?? null;
+    
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 };
