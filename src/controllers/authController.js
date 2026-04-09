@@ -63,7 +63,6 @@ export const logout = async (req, res) => {
     if (!req.user) {
       return errorResponse(res, "Unauthorized", 401);
     }
-    console.log("dia udah log out", req.user)
 
     // NOTE: JWT stateless — untuk invalidate token beneran perlu blacklist di Redis/DB
     return successResponse(res, null, "Logout berhasil");
