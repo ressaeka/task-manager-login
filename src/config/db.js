@@ -18,11 +18,4 @@ const pool = new Pool({
   connectionTimeoutMillis: 2000,
 });
 
-if (process.env.NODE_ENV !== "test") {
-  pool
-    .connect()
-    .then(() => console.log("DB Connected"))
-    .catch((err) => console.log(err));
-}
-
 export default pool;
