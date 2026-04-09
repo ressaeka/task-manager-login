@@ -56,7 +56,7 @@ export const countTasksByUserId = async (userId, status=null) => {
     const values = [userId];
 
     if(status){
-      query += `AND status = $2`;
+      query += ` AND status = $2`;
       values.push(status);
     }
 

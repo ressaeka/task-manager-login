@@ -45,7 +45,7 @@ export const getTasks = async (req, res) => {
     const status = req.query.status;
 
     if(page < 1){
-      return errorResponse(res, "Page miniaml 1", 400);
+      return errorResponse(res, "Page minimal 1", 400);
     }
 
     if(limit < 1 || limit > 100){
