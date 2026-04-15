@@ -3,6 +3,9 @@ import {
   getTasksService,
   getTaskByIdService,
   updateTaskService,
+  softDeleteTaskService,
+  restoreTaskService,
+  getDeletedTasksService,
   deleteTaskService,
 } from "../services/tasksServices.js";
 import {
@@ -142,5 +145,57 @@ export const deleteTask = async (req, res) => {
     return successResponse(res, null, "Task berhasil dihapus", 200);
   } catch (err) {
     return errorResponse(res, err.message, 400);
+  }
+};
+
+export const softDeleteTask = async (req, res) => {
+  try {
+    if(!req.user){
+      return errorResponse(res, "Unauthorized" , 401)
+    }
+
+    const taskId = Number(req.params.id)
+
+    if(isNaN(taskId) || taskId <= 0) {
+      return errorResponse(res, "ID task tidak valid", 400)
+    }
+
+    await softDeleteTaskService(taskId, req.user.id);
+    return successResponse(res, null, "Task berhasil di hapus", 200)
+  }catch(err){
+    return errorResponse(res, err.message, 400)
+  }
+
+};
+
+export const restoreTask = async (req, res) => {
+  try {
+    if (!req.user) {
+      return errorResponse(res, "Unauthorized", 401);
+    }
+    
+    const taskId = Number(req.params.id);
+    
+    if (isNaN(taskId) || taskId <= 0) {
+      return errorResponse(res, "ID task tidak valid", 400);
+    }
+    
+    await restoreTaskService(taskId, req.user.id);
+    return successResponse(res, null, "Task berhasil direstore", 200);
+  } catch (err) {
+    return errorResponse(res, err.message, 400);
+  }
+};
+
+export const getDeletedTask = async (req, res) => {
+  try {
+    if (!req.user) {
+      return errorResponse(res, "Unauthorized", 401);
+    }
+    
+    const tasks = await getDeletedTasksService(req.user.id);
+    return successResponse(res, { tasks }, "Berhasil mengambil task yang dihapus", 200);
+  } catch (err) {
+    return serverErrorResponse(res, err.message, 500);
   }
 };

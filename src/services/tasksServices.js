@@ -5,7 +5,10 @@ import {
   countTasksByUserId,        
   findTaskById,
   updateTaskById,
+  restoreTaskById,
+  getDeletedTasksByUserId,
   deleteTaskById,
+
 } from "../models/tasksModel.js";
 
 // CREATE TASK
@@ -71,4 +74,33 @@ export const deleteTaskService = async ({ taskId, userId }) => {
   }
 
   await deleteTaskById(taskId, userId);
+};
+
+export const softDeleteTaskService = async (taskId, userId) => {
+  const task = await findTaskById(taskId, userId);
+
+  if(!task){
+    throw new Error("Task tidak ditemukan")
+  }
+  if(task.deleted_at){
+    throw new Error("Task sudah di hapus")
+  }
+}
+
+export const restoreTaskService = async (taskId, userId) => {
+  const task = await findTaskById(taskId, userId)
+
+  if(!task){
+    throw new Error("Task tidak ditemukan")
+  }
+
+  if(!task.deleted_at){
+    throw new Error("Task masih aktiv, tidak perlu di restore")
+  }
+
+  return restoreTaskById(userId, taskId)
+}
+
+export const getDeletedTasksService = async (userId) => {
+  return await getDeletedTasksByUserId(userId);
 };

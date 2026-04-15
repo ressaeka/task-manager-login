@@ -105,3 +105,43 @@ export const deleteTaskById = async (taskId, userId) => {
   );
   return result.rows[0] ?? null;
 };
+
+// SOFT DELETE TASKS + EXPIRES
+export const softDeleteUserById = async (taskId, userId) => {
+  const result = await pool.query (
+    `UPDATE tasks SET
+    deleted_at = NOW(),
+    expires_at = NOW() + INVERTAL '30 days'
+    WHERE user_id = $1 AND user_id = $2 deleted_at IS NULL
+    RETURNING id, public_id, title, description, status, user_id, create_at, update_at, deleted_at, expires_at`,
+  [userId, taskId]
+  );
+  return result.rows[0] ?? null;
+}
+
+// RESTORE TASKS
+export const restoreTaskById = async (taskId, userId) => {
+  const result = await pool.query(
+    `UPDATE tasks SET
+    deleted_at  = NULL,
+    expired_at = NULL
+    WHERE user_id = $1 AND user_id = $2 
+    RETURNING id, public_id, title, description, status, user_id, create_at, update_at, deleted_at, expires_at`,
+    [taskId, userId]
+  );
+  return result.rows[0] ?? null;
+
+}
+
+// GET DELETE TASKS
+export const getDeletedTasksByUserId = async (userId) => {
+  const result = await pool.query(
+    `SELECT id, public_id, title, description, status, user_id, created_at, updated_at, deleted_at, expires_at
+     FROM tasks
+     WHERE user_id = $1 AND deleted_at IS NOT NULL
+     ORDER BY deleted_at DESC`,
+    [userId]
+  );
+  return result.rows;
+};
+
