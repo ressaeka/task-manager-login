@@ -46,6 +46,7 @@ export const getTasks = async (req, res) => {
     const page =  parseInt (req.query.page) || 1;
     const limit = parseInt (req.query.limit) || 10;
     const status = req.query.status;
+    const search = req.query.search;
 
     if(page < 1){
       return errorResponse(res, "Page minimal 1", 400);
@@ -59,7 +60,7 @@ export const getTasks = async (req, res) => {
       return errorResponse(res, "Status harus pending, in-progress, atau done", 400)
     }
 
-    const result = await getTasksService(req.user.id, page, limit, status);
+    const result = await getTasksService(req.user.id, page, limit, status, search);
 
     return successResponse(res, result , "Berhasil mengambil tasks");
   } catch (err) {
@@ -148,6 +149,7 @@ export const deleteTask = async (req, res) => {
   }
 };
 
+//soft delete
 export const softDeleteTask = async (req, res) => {
   try {
     if(!req.user){
@@ -168,6 +170,7 @@ export const softDeleteTask = async (req, res) => {
 
 };
 
+//restore soft delete
 export const restoreTask = async (req, res) => {
   try {
     if (!req.user) {
@@ -187,6 +190,7 @@ export const restoreTask = async (req, res) => {
   }
 };
 
+// get soft delete
 export const getDeletedTask = async (req, res) => {
   try {
     if (!req.user) {

@@ -25,11 +25,11 @@ export const createTaskService = async ({ title, description, userId }) => {
 };
 
 // GET TASKS WITH PAGINATION + FILTER
-export const getTasksService = async (userId, page = 1, limit = 10, status=null) => {
+export const getTasksService = async (userId, page = 1, limit = 10, status=null, search=null) => {
   const offset = (page - 1) * limit;  
   
   // filter kalo ada status, panggil filter
-  const tasks = await getTasksByUserIdPaginated(userId, limit, offset, status);
+  const tasks = await getTasksByUserIdPaginated(userId, limit, offset, status, search);
   const total = await countTasksByUserId(userId);
   
   return {
@@ -39,7 +39,8 @@ export const getTasksService = async (userId, page = 1, limit = 10, status=null)
       limit,
       total,
       totalPages: Math.ceil(total / limit),
-      ...(status && { filter: { status } })
+      ...(status && { filter: { status } } ),
+      ...(search && { filter: { search } } )
     }
   };
 };
@@ -77,6 +78,7 @@ export const deleteTaskService = async ({ taskId, userId }) => {
   await deleteTaskById(taskId, userId);
 };
 
+// soft delete
 export const softDeleteTaskService = async (taskId, userId) => {
   const task = await findTaskById(taskId, userId);
   
@@ -91,6 +93,7 @@ export const softDeleteTaskService = async (taskId, userId) => {
   return await softDeleteTaskById(taskId, userId);
 };
 
+// Restore soft delete
 export const restoreTaskService = async (taskId, userId) => {
   const task = await findTaskById(taskId, userId);
   
@@ -105,6 +108,7 @@ export const restoreTaskService = async (taskId, userId) => {
   return await restoreTaskById(taskId, userId);
 };
 
+// get soft delete 
 export const getDeleteTaskService = async (userId) => {
   return await getDeleteTaskByUserId(userId);
 };

@@ -23,12 +23,12 @@ export const getTasksByUserId = async (userId) => {
   return result.rows;
 };
 
-// GET TASKS BY USER ( dengan filter status )
-export const getTasksByUserIdPaginated = async (userId, limit, offset, status = null) => {
+// GET TASKS BY USER WITH PAGINATION + FILTER STATUS + SEARCH
+export const getTasksByUserIdPaginated = async (userId, limit, offset, status = null, search = null) => {
   let query = `
     SELECT id, public_id, title, description, status, created_at, updated_at
     FROM tasks
-    WHERE user_id = $1
+    WHERE user_id = $1 AND deleted_at IS NULL 
   `;
   const values = [userId];
   let paramCount = 2;
@@ -39,6 +39,15 @@ export const getTasksByUserIdPaginated = async (userId, limit, offset, status = 
     paramCount++;
   }
 
+  //FILTER BY SEARCH (title)
+  if(search) {
+    query += ` AND title ILIKE $${paramCount}`;
+    values.push(`%${search}%`);
+    paramCount++;
+  }
+
+        console.log("🔍 Search di controller:", search);
+
 
   query += ` ORDER BY created_at DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
 
@@ -48,17 +57,30 @@ export const getTasksByUserIdPaginated = async (userId, limit, offset, status = 
   return result.rows;
 };
 
-// COUNT TASKS BY USER
-export const countTasksByUserId = async (userId, status=null) => {
+// COUNT TASKS BY USER WITH FILTERS
+export const countTasksByUserId = async (userId, status=null, search = null) => {
   let query =
-    `SELECT COUNT(*) FROM tasks WHERE user_id = $1`;
+    `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND deleted_at IS NULL`;
 
     const values = [userId];
+    let paramCount = 2;
 
     if(status){
-      query += ` AND status = $2`;
+      query += ` AND status = $${paramCount}`;
       values.push(status);
     }
+
+    if(search) {
+      query += ` AND title ILIKE $${paramCount}`;
+      values.push(`%${search}%`);
+      // eslint-disable-next-line no-useless-assignment
+      paramCount++;
+
+    }
+    console.log("Query:", query);
+    console.log("Values:", values);
+
+
 
     const result = await pool.query(query, values);
     return parseInt(result.rows[0].count)
