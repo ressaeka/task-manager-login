@@ -12,7 +12,7 @@ export const createAdmin = async ({ username, password }) => {
 };
 
 // GET ALL USERS WITH PAGINATION + FILTER
-export const findAllUsersPaginated = async (limit, offset, role = null) => {
+export const findAllUsersPaginated = async (limit, offset, role = null, public_id=null) => {
   let query = `
     SELECT id, public_id, username, role, created_at
     FROM users
@@ -27,6 +27,13 @@ export const findAllUsersPaginated = async (limit, offset, role = null) => {
     paramCount++;
   }
 
+  if(public_id){
+    query += ` AND public_id = $${paramCount}`;
+    values.push(public_id);
+    paramCount++;
+  }
+
+
   query += ` ORDER BY created_at DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
   values.push(limit, offset);
 
@@ -34,27 +41,35 @@ export const findAllUsersPaginated = async (limit, offset, role = null) => {
   return result.rows;
 };
 
-export const countTotalUsers = async (role = null) => {
+//COUNT TASK BY ADMIN WITH PAGINATION + FILTER
+export const countTotalUsers = async (role = null, public_id=null) => {
   let query = `SELECT COUNT(*) FROM users WHERE deleted_at IS NULL`;
   const values = [];
+  const paramCount = 1;
 
   if (role) {
-    query += ` AND role = $1`;
+    query += ` AND role = $${paramCount}`;
     values.push(role);
+  }
+
+  if(public_id){
+    query += ` AND public_id = $${paramCount}`;
+    values.push(public_id)
+
   }
 
   const result = await pool.query(query, values);
   return parseInt(result.rows[0].count);
 };
 
-// GET ALL TASKS WITH PAGINATION + FILTER
-export const findAllTasksPaginated = async (limit, offset, status = null) => {
+// GET TASKS WITH PAGINATION + FILTER
+export const findAllTasksPaginated = async (limit, offset, status = null, search=null) => {
   let query = `
     SELECT t.id, t.public_id, t.title, t.description, t.status, 
            t.user_id, t.created_at, t.updated_at, u.username
     FROM tasks t
-    JOIN users u ON u.id = t.user_id
-    WHERE 1=1
+    JOIN users u ON u.id = t.user_id 
+    WHERE t.deleted_at IS NULL 
   `;
   const values = [];
   let paramCount = 1;  
@@ -65,6 +80,14 @@ export const findAllTasksPaginated = async (limit, offset, status = null) => {
     paramCount++;
   }
 
+  // SEARCH BY TITLE
+  if(search){
+    query += ` AND t.title ILIKE $${paramCount}`;
+    values.push(`%${search}%`);
+    paramCount++
+
+  }
+
   query += ` ORDER BY t.created_at DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
   values.push(limit, offset);
 
@@ -72,13 +95,18 @@ export const findAllTasksPaginated = async (limit, offset, status = null) => {
   return result.rows;
 };
 
-export const countTotalTasks = async (status = null) => {
+export const countTotalTasks = async (status = null, search=null) => {
   let query = `SELECT COUNT(*) FROM tasks WHERE 1=1`; 
   const values = [];
 
   if (status) {
     query += ` AND status = $1`; 
     values.push(status);
+  }
+
+  if(search){
+    query += ` AND ILIKE = $2`
+    values.push(`%${search}%`);
   }
 
   const result = await pool.query(query, values);

@@ -42,10 +42,10 @@ export const createAdminService = async (userData) => {
 };
 
 // GET ALL USERS WITH PAGINATION
-export const getAllUsersService = async (page = 1, limit = 10, role = null) => {
+export const getAllUsersService = async (page = 1, limit = 10, role = null, public_id=null) => {
   const offset = (page - 1) * limit;
 
-  const users = await findAllUsersPaginated(limit, offset, role);
+  const users = await findAllUsersPaginated(limit, offset, role, public_id);
   const total = await countTotalUsers(role);  
 
   return {
@@ -55,7 +55,10 @@ export const getAllUsersService = async (page = 1, limit = 10, role = null) => {
       limit,
       total,
       totalPages: Math.ceil(total / limit),
-      ...(role && {filter: {role}})
+      ...(role     &&   { filter    :   {  role      }}),
+      ...(public_id &&   { filter   :   {  public_id  }})
+
+
     }
   };
 };
@@ -82,11 +85,11 @@ export const findUserById = async (userId) => {
   return user;
 };
 
-// GET ALL TASKS WITH PAGINATION
-export const getAllTasksService = async (page = 1, limit = 10, status = null) => {
+// GET TASKS WITH PAGINATION
+export const getAllTasksService = async (page = 1, limit = 10, status = null, search=null) => {
   const offset = (page - 1) * limit;
 
-  const tasks = await findAllTasksPaginated(limit, offset, status);
+  const tasks = await findAllTasksPaginated(limit, offset, status, search);
   const total = await countTotalTasks(status);  
 
   return {
@@ -96,7 +99,9 @@ export const getAllTasksService = async (page = 1, limit = 10, status = null) =>
       limit,
       total,
       totalPages: Math.ceil(total / limit),
-      ...(status && { filter: { status } })
+      ...(status && { filter: { status } }),
+      ...(search && { filter: { search } })
+
     }
   };
 };

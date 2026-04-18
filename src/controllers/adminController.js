@@ -77,6 +77,7 @@ export const getAllUsers = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const role = req.query.role;
+    const public_id = req.query.public_id;
     
     if (page < 1) {
       return errorResponse(res, "Page minimal 1", 400);
@@ -88,20 +89,30 @@ export const getAllUsers = async (req, res) => {
       return errorResponse(res, "Role harus 'user' atau 'admin'", 400);
     }
     
-    const result = await getAllUsersService(page, limit, role);
+    const result = await getAllUsersService(page, limit, role,public_id);
+
+    let message = "Berhasil mengambil semua user";
+
+    if(public_id){
+      message = `Berhasil mengambil user dengan public_id : ${public_id}`
+    }
+    else if(role){
+      message = `Berhasil mengambil user dengan role: ${role}`
+    }
     
-    return successResponse(res, result, "Berhasil mengambil semua user", 200);
+    return successResponse(res, result, message, 200);
   } catch (err) {
     return serverErrorResponse(res, err.message, 500);
   }
 };
 
-// GET ALL TASKS 
+// GET TASKS 
 export const getAllTasks = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const status = req.query.status;
+    const search = req.query.search;
 
     if(page < 1) {
       return errorResponse(res, "Page minimal 1", 400);
@@ -114,7 +125,7 @@ export const getAllTasks = async (req, res) => {
       return errorResponse(res, "Status harus pending, in-progress, atau done", 400);
     }
 
-    const result = await getAllTasksService(page, limit, status);
+    const result = await getAllTasksService(page, limit, status, search);
 
     return successResponse(res, result, "Berhasil mengambil semua tasks", 200);
   } catch (err) {

@@ -39,15 +39,12 @@ export const getTasksByUserIdPaginated = async (userId, limit, offset, status = 
     paramCount++;
   }
 
-  //FILTER BY SEARCH (title)
+  // FILTER BY SEARCH (title)
   if(search) {
     query += ` AND title ILIKE $${paramCount}`;
     values.push(`%${search}%`);
     paramCount++;
   }
-
-        console.log("🔍 Search di controller:", search);
-
 
   query += ` ORDER BY created_at DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
 
