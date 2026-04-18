@@ -169,13 +169,9 @@ export const softDeleteUserService = async (userId) => {
   return await softDeleteUserById(userId)
 };
 
-//RESTORE USER 
+// RESTORE USER 
 export const restoreUserService = async (userId) => {
   const user = await findUserByIdModel(userId)
-
-  console.log("USER DATA:", user);
-  console.log("deleted_at value:", user.deleted_at);
-  console.log("deleted_at type:", typeof user.deleted_at)
 
   if(!user){
     throw new Error("User tidak di temukan")

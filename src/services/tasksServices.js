@@ -6,7 +6,8 @@ import {
   findTaskById,
   updateTaskById,
   restoreTaskById,
-  getDeletedTasksByUserId,
+  getDeleteTaskByUserId,
+  softDeleteTaskById,
   deleteTaskById,
 
 } from "../models/tasksModel.js";
@@ -78,29 +79,32 @@ export const deleteTaskService = async ({ taskId, userId }) => {
 
 export const softDeleteTaskService = async (taskId, userId) => {
   const task = await findTaskById(taskId, userId);
-
-  if(!task){
-    throw new Error("Task tidak ditemukan")
+  
+  if (!task) {
+    throw new Error("Task tidak ditemukan");
   }
-  if(task.deleted_at){
-    throw new Error("Task sudah di hapus")
+  
+  if (task.deleted_at) {
+    throw new Error("Task sudah dihapus");
   }
-}
+  
+  return await softDeleteTaskById(taskId, userId);
+};
 
 export const restoreTaskService = async (taskId, userId) => {
-  const task = await findTaskById(taskId, userId)
-
-  if(!task){
-    throw new Error("Task tidak ditemukan")
+  const task = await findTaskById(taskId, userId);
+  
+  if (!task) {
+    throw new Error("Task tidak ditemukan");
   }
-
-  if(!task.deleted_at){
-    throw new Error("Task masih aktiv, tidak perlu di restore")
+  
+  if (!task.deleted_at) {
+    throw new Error("Task masih aktif, tidak perlu direstore");
   }
+  
+  return await restoreTaskById(taskId, userId);
+};
 
-  return restoreTaskById(userId, taskId)
-}
-
-export const getDeletedTasksService = async (userId) => {
-  return await getDeletedTasksByUserId(userId);
+export const getDeleteTaskService = async (userId) => {
+  return await getDeleteTaskByUserId(userId);
 };

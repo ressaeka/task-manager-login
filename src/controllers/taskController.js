@@ -5,7 +5,7 @@ import {
   updateTaskService,
   softDeleteTaskService,
   restoreTaskService,
-  getDeletedTasksService,
+  getDeleteTaskService,
   deleteTaskService,
 } from "../services/tasksServices.js";
 import {
@@ -193,7 +193,7 @@ export const getDeletedTask = async (req, res) => {
       return errorResponse(res, "Unauthorized", 401);
     }
     
-    const tasks = await getDeletedTasksService(req.user.id);
+    const tasks = await getDeleteTaskService(req.user.id);
     return successResponse(res, { tasks }, "Berhasil mengambil task yang dihapus", 200);
   } catch (err) {
     return serverErrorResponse(res, err.message, 500);

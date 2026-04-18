@@ -16,13 +16,13 @@ const router = express.Router();
 // TASKS
 router.post("/tasks", authMiddleware, createTask);
 router.get("/tasks", authMiddleware, getTasks);
-router.get("/tasks/:id", authMiddleware, getTaskById);  
-router.put("/tasks/:id", authMiddleware, updateTask);
-router.delete("/tasks/:id", authMiddleware, deleteTask);
+router.get("//:id", authMiddleware, getTaskById);  
+router.put("/:id", authMiddleware, updateTask);
+router.delete("/:id", authMiddleware, deleteTask);
 
 // SOFT DELETE & RESTORE TASK (UNTUK USER)
-router.delete("/tasks/:id/soft", authMiddleware, softDeleteTask);
-router.post("/tasks/:id/restore", authMiddleware, restoreTask);
-router.get("/tasks/deleted", authMiddleware, getDeletedTask);
+router.delete("/:id/soft", authMiddleware, softDeleteTask);
+router.post("/:id/restore", authMiddleware, restoreTask);
+router.get("/deleted", authMiddleware, getDeletedTask);
 
 export default router;
