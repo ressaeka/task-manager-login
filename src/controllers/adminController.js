@@ -89,10 +89,8 @@ export const getAllUsers = async (req, res) => {
       return errorResponse(res, "Role harus 'user' atau 'admin'", 400);
     }
     
-    const result = await getAllUsersService(page, limit, role,public_id);
-
     let message = "Berhasil mengambil semua user";
-
+    
     if(public_id){
       message = `Berhasil mengambil user dengan public_id : ${public_id}`
     }
@@ -100,6 +98,11 @@ export const getAllUsers = async (req, res) => {
       message = `Berhasil mengambil user dengan role: ${role}`
     }
     
+    const result = await getAllUsersService(page, limit, role,public_id);
+    
+    if (public_id && result.users.length === 0) {
+      return errorResponse(res, `User dengan public_id : ${public_id} tidak ditemukan`, 404);
+    }
     return successResponse(res, result, message, 200);
   } catch (err) {
     return serverErrorResponse(res, err.message, 500);
