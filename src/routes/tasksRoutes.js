@@ -7,7 +7,11 @@ import {
   softDeleteTask,
   restoreTask,
   deleteTask,
-  getDeletedTask
+  getDeletedTask,
+  setDeadlineTask,
+  getTaskByDeadline,
+  getTaskDeadlineToday
+
 } from "../controllers/taskController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 
@@ -24,5 +28,10 @@ router.delete("/:id", authMiddleware, deleteTask);
 router.delete("/:id/soft", authMiddleware, softDeleteTask);
 router.post("/:id/restore", authMiddleware, restoreTask);
 router.get("/deleted", authMiddleware, getDeletedTask);
+
+// Deadline
+router.put("/tasks/:id/deadline", authMiddleware, setDeadlineTask);
+router.get("/tasks/deadline/upcoming", authMiddleware, getTaskByDeadline);
+router.get("/tasks/deadline/today", authMiddleware, getTaskDeadlineToday);
 
 export default router;

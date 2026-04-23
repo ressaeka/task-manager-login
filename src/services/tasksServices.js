@@ -9,17 +9,21 @@ import {
   getDeleteTaskByUserId,
   softDeleteTaskById,
   deleteTaskById,
-
+  setDeadlineTask,
+  getTaskByDeadline,
+  getTaskDeadlineToday,
+  countTasksWithDeadline,
 } from "../models/tasksModel.js";
 
 // CREATE TASK
-export const createTaskService = async ({ title, description, userId }) => {
+export const createTaskService = async ({ title, description,deadline_at, userId }) => {
   const nanoid = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10);
   
   return await createTask({
     publicId: nanoid(),
     title,
     description,
+    deadline_at,
     userId,
   });
 };
@@ -111,4 +115,49 @@ export const restoreTaskService = async (taskId, userId) => {
 // get soft delete 
 export const getDeleteTaskService = async (userId) => {
   return await getDeleteTaskByUserId(userId);
+};
+
+
+// SET DEADLINE TASK SERVICE
+export const setDeadlineTaskService = async (taskId, userId, deadline_at) => {
+  // Validasi task ada
+  const task = await findTaskById(taskId, userId);
+  
+  if (!task) {
+    throw new Error("Task tidak ditemukan");
+  }
+  
+  if (task.deleted_at) {
+    throw new Error("Task sudah dihapus");
+  }
+  
+  // Validasi deadline tidak boleh kurang dari hari ini
+  if (deadline_at && new Date(deadline_at) < new Date()) {
+    throw new Error("Deadline tidak boleh kurang dari hari ini");
+  }
+  
+  return await setDeadlineTask(taskId, userId, deadline_at);
+};
+
+// GET TASKS BY DEADLINE SERVICE (URUT TERDEKAT)
+export const getTaskByDeadlineService = async (userId, page = 1, limit = 10) => {
+  const offset = (page - 1) * limit;
+  
+  const tasks = await getTaskByDeadline(userId, limit, offset);
+  const total = await countTasksWithDeadline(userId);
+  
+  return {
+    tasks,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit)
+    }
+  };
+};
+
+// GET TASKS DEADLINE TODAY SERVICE
+export const getTaskDeadlineTodayService = async (userId) => {
+  return await getTaskDeadlineToday(userId);
 };

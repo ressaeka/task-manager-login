@@ -7,6 +7,9 @@ import {
   restoreTaskService,
   getDeleteTaskService,
   deleteTaskService,
+  setDeadlineTaskService,
+  getTaskByDeadlineService,
+  getTaskDeadlineTodayService
 } from "../services/tasksServices.js";
 import {
   successResponse,
@@ -27,6 +30,7 @@ export const createTask = async (req, res) => {
       const task = await createTaskService({
         title: req.body.title,
         description: req.body.description,
+        deadline_at: req.body.deadline_at,
         userId: req.user.id,
       });
 
@@ -199,6 +203,85 @@ export const getDeletedTask = async (req, res) => {
     
     const tasks = await getDeleteTaskService(req.user.id);
     return successResponse(res, { tasks }, "Berhasil mengambil task yang dihapus", 200);
+  } catch (err) {
+    return serverErrorResponse(res, err.message, 500);
+  }
+};
+
+
+// SET DEADLINE TASK
+export const setDeadlineTask = async (req, res) => {
+  try {
+    if (!req.user) {
+      return errorResponse(res, "Unauthorized", 401);
+    }
+
+    const taskId = Number(req.params.id);
+    const { deadline_at } = req.body;
+
+    if (isNaN(taskId) || taskId <= 0) {
+      return errorResponse(res, "ID task tidak valid", 400);
+    }
+
+    if (!deadline_at) {
+      return errorResponse(res, "Deadline tidak boleh kosong", 400);
+    }
+
+    // Validasi format tanggal
+    if (isNaN(Date.parse(deadline_at))) {
+      return errorResponse(res, "Format deadline tidak valid. Gunakan YYYY-MM-DD atau ISO 8601", 400);
+    }
+
+    const task = await setDeadlineTaskService(taskId, req.user.id, deadline_at);
+
+    if (!task) {
+      return errorResponse(res, "Task tidak ditemukan", 404);
+    }
+
+    return successResponse(res, { task }, "Deadline task berhasil diatur", 200);
+  } catch (err) {
+    return errorResponse(res, err.message, 400);
+  }
+};
+
+// GET TASKS BY DEADLINE (URUT TERDEKAT)
+export const getTaskByDeadline = async (req, res) => {
+  try {
+    if (!req.user) {
+      return errorResponse(res, "Unauthorized", 401);
+    }
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const result = await getTaskByDeadlineService(req.user.id, page, limit);
+
+    let message = "Berhasil mengambil tasks berdasarkan deadline";
+    if (result.tasks.length === 0) {
+      message = "Tidak ada tasks dengan deadline";
+    }
+
+    return successResponse(res, result, message, 200);
+  } catch (err) {
+    return serverErrorResponse(res, err.message, 500);
+  }
+};
+
+// GET TASKS DEADLINE TODAY
+export const getTaskDeadlineToday = async (req, res) => {
+  try {
+    if (!req.user) {
+      return errorResponse(res, "Unauthorized", 401);
+    }
+
+    const tasks = await getTaskDeadlineTodayService(req.user.id);
+
+    let message = "Berhasil mengambil tasks dengan deadline hari ini";
+    if (tasks.length === 0) {
+      message = "Tidak ada tasks dengan deadline hari ini";
+    }
+
+    return successResponse(res, { tasks }, message, 200);
   } catch (err) {
     return serverErrorResponse(res, err.message, 500);
   }

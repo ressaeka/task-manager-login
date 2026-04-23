@@ -1,12 +1,12 @@
 import pool from "../config/db.js";
 
 // CREATE TASK
-export const createTask = async ({ publicId, title, description, userId }) => {
+export const createTask = async ({ publicId, title, description, deadline_at, userId }) => {
   const result = await pool.query(
-    `INSERT INTO tasks (public_id, title, description, user_id, status)
-     VALUES ($1, $2, $3, $4, $5)
-     RETURNING id, public_id, title, description, status, user_id, created_at, updated_at`,
-    [publicId, title, description, userId, "pending"],
+    `INSERT INTO tasks (public_id, title, description, deadline_at, user_id, status)
+     VALUES ($1, $2, $3, $4, $5, $6)
+     RETURNING id, public_id, title, description, deadline_at, status, user_id, created_at, updated_at`,
+    [publicId, title, description, deadline_at, userId, "pending"],
   );
   return result.rows[0];
 };
@@ -14,7 +14,7 @@ export const createTask = async ({ publicId, title, description, userId }) => {
 // GET TASKS BY USER (tanpa pagination)
 export const getTasksByUserId = async (userId) => {
   const result = await pool.query(
-    `SELECT id, public_id, title, description, status, created_at, updated_at
+    `SELECT id, public_id, title, description, status,deadline_at, created_at, updated_at
      FROM tasks
      WHERE user_id = $1
      ORDER BY created_at DESC`,
@@ -26,7 +26,7 @@ export const getTasksByUserId = async (userId) => {
 // GET TASKS BY USER WITH PAGINATION + FILTER STATUS + SEARCH
 export const getTasksByUserIdPaginated = async (userId, limit, offset, status = null, search = null) => {
   let query = `
-    SELECT id, public_id, title, description, status, created_at, updated_at
+    SELECT id, public_id, title, description, status, deadline_at, created_at, updated_at
     FROM tasks
     WHERE user_id = $1 AND deleted_at IS NULL 
   `;
@@ -86,7 +86,7 @@ export const countTasksByUserId = async (userId, status=null, search = null) => 
 // FIND TASK BY ID + USER
 export const findTaskById = async (taskId, userId) => {
   const result = await pool.query(
-    `SELECT id, public_id, title, description, status, created_at, updated_at, deleted_at , expires_at
+    `SELECT id, public_id, title, description, deadline_at, status, created_at, updated_at, deleted_at , expires_at
      FROM tasks
      WHERE id = $1 AND user_id = $2`,
     [taskId, userId],
@@ -98,7 +98,7 @@ export const findTaskById = async (taskId, userId) => {
 export const updateTaskById = async (
   taskId,
   userId,
-  { title, description, status },
+  { title, description, status, deadline_at },  
 ) => {
   const result = await pool.query(
     `UPDATE tasks
@@ -106,14 +106,14 @@ export const updateTaskById = async (
        title = COALESCE($1, title),
        description = COALESCE($2, description),
        status = COALESCE($3, status),
+       deadline_at = COALESCE($4, deadline_at),  // ← tambah ini
        updated_at = NOW()
-     WHERE id = $4 AND user_id = $5
-     RETURNING id, public_id, title, description, status, created_at, updated_at`,
-    [title, description, status, taskId, userId],
+     WHERE id = $5 AND user_id = $6
+     RETURNING id, public_id, title, description, status, deadline_at, created_at, updated_at`,
+    [title, description, status, deadline_at, taskId, userId], 
   );
   return result.rows[0] ?? null;
 };
-
 // DELETE TASK
 export const deleteTaskById = async (taskId, userId) => {
   const result = await pool.query(
@@ -131,7 +131,7 @@ export const softDeleteTaskById = async (taskId, userId) => {
       deleted_at = NOW(),
       expires_at = NOW() + INTERVAL '30 days'
      WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL
-     RETURNING id, public_id, title, description, status, user_id, created_at, updated_at, deleted_at, expires_at`,
+     RETURNING id, public_id, title, description, deadline_at,  status, user_id, created_at, updated_at, deleted_at, expires_at`,
     [taskId, userId]
   );
   return result.rows[0] ?? null;
@@ -144,7 +144,7 @@ export const restoreTaskById = async (taskId, userId) => {
       deleted_at = NULL,
       expires_at = NULL
      WHERE id = $1 AND user_id = $2
-     RETURNING id, public_id, title, description, status, user_id, created_at, updated_at, deleted_at, expires_at`,
+     RETURNING id, public_id, title, description, status, deadline_at, user_id, created_at, updated_at, deleted_at, expires_at`,
     [taskId, userId]
   );
   return result.rows[0] ?? null;
@@ -153,11 +153,61 @@ export const restoreTaskById = async (taskId, userId) => {
 // Get deleted tasks (tong sampah user)
 export const getDeleteTaskByUserId = async (userId) => {
   const result = await pool.query(
-    `SELECT id, public_id, title, description, status, user_id, created_at, updated_at, deleted_at, expires_at
+    `SELECT id, public_id, title, description, deadline_at, status, user_id, created_at, updated_at, deleted_at, expires_at
      FROM tasks
      WHERE user_id = $1 AND deleted_at IS NOT NULL
      ORDER BY deleted_at DESC`,
     [userId]
   );
   return result.rows;
+};
+
+// SET DEADLINE TASK (UPDATE)
+export const setDeadlineTask = async (taskId, userId, deadline_at) => {
+  const result = await pool.query(
+    `UPDATE tasks
+     SET deadline_at = COALESCE($1, deadline_at),
+         updated_at = NOW()
+     WHERE id = $2 AND user_id = $3 AND deleted_at IS NULL
+     RETURNING id, public_id, title, description, status, deadline_at, created_at, updated_at`,
+    [deadline_at, taskId, userId]
+  );
+  return result.rows[0] ?? null;
+};
+
+// GET TASKS BY DEADLINE (URUT TERDEKAT)
+export const getTaskByDeadline = async (userId, limit, offset) => {
+  const result = await pool.query(
+    `SELECT id, public_id, title, description, status, deadline_at, created_at, updated_at
+     FROM tasks
+     WHERE user_id = $1 AND deleted_at IS NULL AND deadline_at IS NOT NULL
+     ORDER BY deadline_at ASC
+     LIMIT $2 OFFSET $3`,
+    [userId, limit, offset]
+  );
+  return result.rows;
+};
+
+// GET TASKS DEADLINE TODAY
+export const getTaskDeadlineToday = async (userId) => {
+  const result = await pool.query(
+    `SELECT id, public_id, title, description, status, deadline_at, created_at, updated_at
+     FROM tasks
+     WHERE user_id = $1
+       AND deleted_at IS NULL
+       AND DATE(deadline_at) = CURRENT_DATE
+     ORDER BY deadline_at ASC`,
+    [userId]
+  );
+  return result.rows;
+};
+
+// COUNT TASKS WITH DEADLINE
+export const countTasksWithDeadline = async (userId) => {
+  const result = await pool.query(
+    `SELECT COUNT(*) FROM tasks
+     WHERE user_id = $1 AND deleted_at IS NULL AND deadline_at IS NOT NULL`,
+    [userId]
+  );
+  return parseInt(result.rows[0].count);
 };
