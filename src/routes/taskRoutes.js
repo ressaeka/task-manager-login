@@ -1,7 +1,7 @@
 import express from "express";
 import {
   createTask,
-  getTasks,
+  getTask,
   getTaskById,      
   updateTask,
   softDeleteTask,
@@ -18,8 +18,8 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 // TASKS
-router.post("/tasks", authMiddleware, createTask);
-router.get("/tasks", authMiddleware, getTasks);
+router.post("/task", authMiddleware, createTask);
+router.get("/task", authMiddleware, getTask);
 router.get("/:id", authMiddleware, getTaskById);  
 router.put("/:id", authMiddleware, updateTask);
 router.delete("/:id", authMiddleware, deleteTask);
@@ -30,8 +30,8 @@ router.post("/:id/restore", authMiddleware, restoreTask);
 router.get("/deleted", authMiddleware, getDeletedTask);
 
 // Deadline
-router.put("/tasks/:id/deadline", authMiddleware, setDeadlineTask);
-router.get("/tasks/deadline/upcoming", authMiddleware, getTaskByDeadline);
-router.get("/tasks/deadline/today", authMiddleware, getTaskDeadlineToday);
+router.put("/task/:id/deadline", authMiddleware, setDeadlineTask);
+router.get("/task/deadline/upcoming", authMiddleware, getTaskByDeadline);
+router.get("/task/deadline/today", authMiddleware, getTaskDeadlineToday);
 
 export default router;

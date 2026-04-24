@@ -62,8 +62,8 @@ export const countTotalUsers = async (role = null, public_id=null) => {
   return parseInt(result.rows[0].count);
 };
 
-// GET TASKS WITH PAGINATION + FILTER
-export const findAllTasksPaginated = async (limit, offset, status = null, search=null) => {
+// GET TASK WITH PAGINATION + FILTER
+export const findAllTaskPaginated = async (limit, offset, status = null, search=null) => {
   let query = `
     SELECT t.id, t.public_id, t.title, t.description, t.status, 
            t.user_id, t.created_at, t.updated_at, u.username
@@ -95,7 +95,7 @@ export const findAllTasksPaginated = async (limit, offset, status = null, search
   return result.rows;
 };
 
-export const countTotalTasks = async (status = null, search=null) => {
+export const countTotalTask = async (status = null, search=null) => {
   let query = `SELECT COUNT(*) FROM tasks WHERE 1=1`; 
   const values = [];
 
@@ -114,21 +114,21 @@ export const countTotalTasks = async (status = null, search=null) => {
 };
 
 // DASHBOARD STATS 
-export const countPendingTasks = async () => {
+export const countPendingTask = async () => {
   const result = await pool.query(
     `SELECT COUNT(*) FROM tasks WHERE status = 'pending'`
   );
   return parseInt(result.rows[0].count);
 };
 
-export const countInProgressTasks = async () => {
+export const countInProgressTask = async () => {
   const result = await pool.query(
     `SELECT COUNT(*) FROM tasks WHERE status = 'in-progress'`
   );
   return parseInt(result.rows[0].count);
 };
 
-export const countCompletedTasks = async () => {
+export const countCompletedTask = async () => {
   const result = await pool.query(
     `SELECT COUNT(*) FROM tasks WHERE status = 'done'`
   );
@@ -169,9 +169,9 @@ export const softDeleteUserById = async (userId) => {
   try {
     await client.query('BEGIN');
     
-    // Soft delete tasks user +  expiry 30 hari
+    // Soft delete task user +  expiry 30 hari
     await client.query(
-      `UPDATE tasks SET 
+      `UPDATE task SET 
         deleted_at = NOW(),
         expires_at = NOW() + INTERVAL '30 days'
        WHERE user_id = $1 AND deleted_at IS NULL`,
@@ -206,9 +206,9 @@ export const restoreUserById = async (userId) => {
   try {
     await client.query('BEGIN');
     
-    // Restore tasks user + reset expires_at
+    // Restore task user + reset expires_at
     await client.query(
-      `UPDATE tasks SET 
+      `UPDATE task SET 
         deleted_at = NULL,
         expires_at = NULL
        WHERE user_id = $1 AND deleted_at IS NOT NULL`,

@@ -1,7 +1,7 @@
 import {
   createAdminService,
   getAllUsersService,
-  getAllTasksService,
+  getAllTaskService,
   getDashboardStatsService,
   deleteUserService,
   softDeleteUserService,
@@ -110,7 +110,7 @@ export const getAllUsers = async (req, res) => {
 };
 
 // GET TASKS 
-export const getAllTasks = async (req, res) => {
+export const getAllTask = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -128,7 +128,7 @@ export const getAllTasks = async (req, res) => {
       return errorResponse(res, "Status harus pending, in-progress, atau done", 400);
     }
 
-    const result = await getAllTasksService(page, limit, status, search);
+    const result = await getAllTaskService(page, limit, status, search);
 
     return successResponse(res, result, "Berhasil mengambil semua tasks", 200);
   } catch (err) {

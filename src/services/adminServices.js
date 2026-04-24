@@ -1,12 +1,12 @@
 import { 
-  findAllTasksPaginated,
+  findAllTaskPaginated,
   findAllUsersPaginated, 
   countTotalUsers, 
-  countTotalTasks,
+  countTotalTask,
   deleteUserById,
-  countPendingTasks,
-  countInProgressTasks,
-  countCompletedTasks,
+  countPendingTask,
+  countInProgressTask,
+  countCompletedTask,
   countNewUsersLast7Days,
   countActiveUsersToday,
   softDeleteUserById,
@@ -86,14 +86,14 @@ export const findUserById = async (userId) => {
 };
 
 // GET TASKS WITH PAGINATION
-export const getAllTasksService = async (page = 1, limit = 10, status = null, search=null) => {
+export const getAllTaskService = async (page = 1, limit = 10, status = null, search=null) => {
   const offset = (page - 1) * limit;
 
-  const tasks = await findAllTasksPaginated(limit, offset, status, search);
-  const total = await countTotalTasks(status);  
+  const task = await findAllTaskPaginated(limit, offset, status, search);
+  const total = await countTotalTask(status);  
 
   return {
-    tasks,
+    task,
     pagination: {
       page,
       limit,
@@ -111,37 +111,37 @@ export const getDashboardStatsService = async () => {
   const [
     totalRegularUsers,  
     totalAdmins,        
-    totalTasks,
-    pendingTasks,
-    inProgressTasks,
-    completedTasks,
+    totalTask,
+    pendingTask,
+    inProgressTask,
+    completedTask,
     newUsersLast7Days,
     activeUsersToday
   ] = await Promise.all([
     countTotalUsers('user'),     
     countTotalUsers('admin'),  
-    countTotalTasks(),
-    countPendingTasks(),
-    countInProgressTasks(),
-    countCompletedTasks(),
+    countTotalTask(),
+    countPendingTask(),
+    countInProgressTask(),
+    countCompletedTask(),
     countNewUsersLast7Days(),
     countActiveUsersToday(),
   ]);
 
   const totalAccounts = totalRegularUsers + totalAdmins;
 
-  const completionRate = totalTasks > 0 
-    ? Math.round((completedTasks / totalTasks) * 100) 
+  const completionRate = totalTask > 0 
+    ? Math.round((completedTask / totalTask) * 100) 
     : 0;
 
   return {
     totalUsers: totalRegularUsers, 
     totalAdmins: totalAdmins,       
     totalAccounts: totalAccounts,   
-    totalTasks,
-    pendingTasks,
-    inProgressTasks,
-    completedTasks,
+    totalTask,
+    pendingTask,
+    inProgressTask,
+    completedTask,
     completionRate,
     newUsersLast7Days,
     activeUsersToday

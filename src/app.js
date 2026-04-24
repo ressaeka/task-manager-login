@@ -1,6 +1,6 @@
 import express from "express";
 import authRoutes from "./routes/authRoutes.js";
-import tasksRoutes from "./routes/tasksRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { apiLimiter } from "./middlewares/rateLimiter.js"; 
@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(apiLimiter)
 
 app.use("/auth", authRoutes);
-app.use("/tasks", tasksRoutes);
+app.use("/task", taskRoutes);
 app.use("/admin", adminRoutes);
 
 app.use(errorHandler);

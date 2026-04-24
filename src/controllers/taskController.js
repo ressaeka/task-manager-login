@@ -1,6 +1,6 @@
 import {
   createTaskService,
-  getTasksService,
+  getTaskService,
   getTaskByIdService,
   updateTaskService,
   softDeleteTaskService,
@@ -10,7 +10,7 @@ import {
   setDeadlineTaskService,
   getTaskByDeadlineService,
   getTaskDeadlineTodayService
-} from "../services/tasksServices.js";
+} from "../services/taskServices.js";
 import {
   successResponse,
   errorResponse,
@@ -40,8 +40,8 @@ export const createTask = async (req, res) => {
     }
   };
 
-// GET TASKS
-export const getTasks = async (req, res) => {
+// GET TASK
+export const getTask = async (req, res) => {
   try {
     if (!req.user) {
       return errorResponse(res, "Unauthorized", 401);
@@ -64,9 +64,9 @@ export const getTasks = async (req, res) => {
       return errorResponse(res, "Status harus pending, in-progress, atau done", 400)
     }
 
-    const result = await getTasksService(req.user.id, page, limit, status, search);
+    const result = await getTaskService(req.user.id, page, limit, status, search);
 
-    return successResponse(res, result , "Berhasil mengambil tasks");
+    return successResponse(res, result , "Berhasil mengambil task");
   } catch (err) {
     return serverErrorResponse(res, err.message, 500);
   }
@@ -208,7 +208,6 @@ export const getDeletedTask = async (req, res) => {
   }
 };
 
-
 // SET DEADLINE TASK
 export const setDeadlineTask = async (req, res) => {
   try {
@@ -267,21 +266,21 @@ export const getTaskByDeadline = async (req, res) => {
   }
 };
 
-// GET TASKS DEADLINE TODAY
+// GET TASK DEADLINE TODAY
 export const getTaskDeadlineToday = async (req, res) => {
   try {
     if (!req.user) {
       return errorResponse(res, "Unauthorized", 401);
     }
 
-    const tasks = await getTaskDeadlineTodayService(req.user.id);
+    const task = await getTaskDeadlineTodayService(req.user.id);
 
-    let message = "Berhasil mengambil tasks dengan deadline hari ini";
-    if (tasks.length === 0) {
-      message = "Tidak ada tasks dengan deadline hari ini";
+    let message = "Berhasil mengambil task dengan deadline hari ini";
+    if (task.length === 0) {
+      message = "Tidak ada task dengan deadline hari ini";
     }
 
-    return successResponse(res, { tasks }, message, 200);
+    return successResponse(res, { task }, message, 200);
   } catch (err) {
     return serverErrorResponse(res, err.message, 500);
   }

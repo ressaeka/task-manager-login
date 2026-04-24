@@ -3,7 +3,7 @@ import pool from "../config/db.js";
 // CREATE TASK
 export const createTask = async ({ publicId, title, description, deadline_at, userId }) => {
   const result = await pool.query(
-    `INSERT INTO tasks (public_id, title, description, deadline_at, user_id, status)
+    `INSERT INTO task (public_id, title, description, deadline_at, user_id, status)
      VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING id, public_id, title, description, deadline_at, status, user_id, created_at, updated_at`,
     [publicId, title, description, deadline_at, userId, "pending"],
@@ -11,11 +11,11 @@ export const createTask = async ({ publicId, title, description, deadline_at, us
   return result.rows[0];
 };
 
-// GET TASKS BY USER (tanpa pagination)
-export const getTasksByUserId = async (userId) => {
+// GET TASK BY USER (tanpa pagination)
+export const getTaskByUserId = async (userId) => {
   const result = await pool.query(
     `SELECT id, public_id, title, description, status,deadline_at, created_at, updated_at
-     FROM tasks
+     FROM task
      WHERE user_id = $1
      ORDER BY created_at DESC`,
     [userId],
@@ -23,11 +23,11 @@ export const getTasksByUserId = async (userId) => {
   return result.rows;
 };
 
-// GET TASKS BY USER WITH PAGINATION + FILTER STATUS + SEARCH
-export const getTasksByUserIdPaginated = async (userId, limit, offset, status = null, search = null) => {
+// GET TASK BY USER WITH PAGINATION + FILTER STATUS + SEARCH
+export const getTaskByUserIdPaginated = async (userId, limit, offset, status = null, search = null) => {
   let query = `
     SELECT id, public_id, title, description, status, deadline_at, created_at, updated_at
-    FROM tasks
+    FROM task
     WHERE user_id = $1 AND deleted_at IS NULL 
   `;
   const values = [userId];
@@ -54,10 +54,10 @@ export const getTasksByUserIdPaginated = async (userId, limit, offset, status = 
   return result.rows;
 };
 
-// COUNT TASKS BY USER WITH FILTERS
-export const countTasksByUserId = async (userId, status=null, search = null) => {
+// COUNT TASK BY USER WITH FILTERS
+export const countTaskByUserId = async (userId, status=null, search = null) => {
   let query =
-    `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND deleted_at IS NULL`;
+    `SELECT COUNT(*) FROM task WHERE user_id = $1 AND deleted_at IS NULL`;
 
     const values = [userId];
     let paramCount = 2;
@@ -87,7 +87,7 @@ export const countTasksByUserId = async (userId, status=null, search = null) => 
 export const findTaskById = async (taskId, userId) => {
   const result = await pool.query(
     `SELECT id, public_id, title, description, deadline_at, status, created_at, updated_at, deleted_at , expires_at
-     FROM tasks
+     FROM task
      WHERE id = $1 AND user_id = $2`,
     [taskId, userId],
   ); 
@@ -101,7 +101,7 @@ export const updateTaskById = async (
   { title, description, status, deadline_at },  
 ) => {
   const result = await pool.query(
-    `UPDATE tasks
+    `UPDATE task
      SET
        title = COALESCE($1, title),
        description = COALESCE($2, description),
@@ -117,7 +117,7 @@ export const updateTaskById = async (
 // DELETE TASK
 export const deleteTaskById = async (taskId, userId) => {
   const result = await pool.query(
-    `DELETE FROM tasks
+    `DELETE FROM task
      WHERE id = $1 AND user_id = $2
      RETURNING id, public_id, title`,
     [taskId, userId],
@@ -127,7 +127,7 @@ export const deleteTaskById = async (taskId, userId) => {
 // Soft delete task (individual)
 export const softDeleteTaskById = async (taskId, userId) => {
   const result = await pool.query(
-    `UPDATE tasks SET 
+    `UPDATE task SET 
       deleted_at = NOW(),
       expires_at = NOW() + INTERVAL '30 days'
      WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL
@@ -140,7 +140,7 @@ export const softDeleteTaskById = async (taskId, userId) => {
 // Restore task (individual)
 export const restoreTaskById = async (taskId, userId) => {
   const result = await pool.query(
-    `UPDATE tasks SET 
+    `UPDATE task SET 
       deleted_at = NULL,
       expires_at = NULL
      WHERE id = $1 AND user_id = $2
@@ -150,11 +150,11 @@ export const restoreTaskById = async (taskId, userId) => {
   return result.rows[0] ?? null;
 };
 
-// Get deleted tasks (tong sampah user)
+// Get deleted task (tong sampah user)
 export const getDeleteTaskByUserId = async (userId) => {
   const result = await pool.query(
     `SELECT id, public_id, title, description, deadline_at, status, user_id, created_at, updated_at, deleted_at, expires_at
-     FROM tasks
+     FROM task
      WHERE user_id = $1 AND deleted_at IS NOT NULL
      ORDER BY deleted_at DESC`,
     [userId]
@@ -165,7 +165,7 @@ export const getDeleteTaskByUserId = async (userId) => {
 // SET DEADLINE TASK (UPDATE)
 export const setDeadlineTask = async (taskId, userId, deadline_at) => {
   const result = await pool.query(
-    `UPDATE tasks
+    `UPDATE task
      SET deadline_at = COALESCE($1, deadline_at),
          updated_at = NOW()
      WHERE id = $2 AND user_id = $3 AND deleted_at IS NULL
@@ -179,7 +179,7 @@ export const setDeadlineTask = async (taskId, userId, deadline_at) => {
 export const getTaskByDeadline = async (userId, limit, offset) => {
   const result = await pool.query(
     `SELECT id, public_id, title, description, status, deadline_at, created_at, updated_at
-     FROM tasks
+     FROM task
      WHERE user_id = $1 AND deleted_at IS NULL AND deadline_at IS NOT NULL
      ORDER BY deadline_at ASC
      LIMIT $2 OFFSET $3`,
@@ -188,11 +188,11 @@ export const getTaskByDeadline = async (userId, limit, offset) => {
   return result.rows;
 };
 
-// GET TASKS DEADLINE TODAY
+// GET TASK DEADLINE TODAY
 export const getTaskDeadlineToday = async (userId) => {
   const result = await pool.query(
     `SELECT id, public_id, title, description, status, deadline_at, created_at, updated_at
-     FROM tasks
+     FROM task
      WHERE user_id = $1
        AND deleted_at IS NULL
        AND DATE(deadline_at) = CURRENT_DATE
@@ -202,10 +202,10 @@ export const getTaskDeadlineToday = async (userId) => {
   return result.rows;
 };
 
-// COUNT TASKS WITH DEADLINE
-export const countTasksWithDeadline = async (userId) => {
+// COUNT TASK WITH DEADLINE
+export const countTaskWithDeadline = async (userId) => {
   const result = await pool.query(
-    `SELECT COUNT(*) FROM tasks
+    `SELECT COUNT(*) FROM task
      WHERE user_id = $1 AND deleted_at IS NULL AND deadline_at IS NOT NULL`,
     [userId]
   );

@@ -1,8 +1,8 @@
 import { customAlphabet } from "nanoid";
 import {
   createTask,
-  getTasksByUserIdPaginated,
-  countTasksByUserId,        
+  getTaskByUserIdPaginated,
+  countTaskByUserId,        
   findTaskById,
   updateTaskById,
   restoreTaskById,
@@ -12,7 +12,7 @@ import {
   setDeadlineTask,
   getTaskByDeadline,
   getTaskDeadlineToday,
-  countTasksWithDeadline,
+  countTaskWithDeadline,
 } from "../models/tasksModel.js";
 
 // CREATE TASK
@@ -29,15 +29,15 @@ export const createTaskService = async ({ title, description,deadline_at, userId
 };
 
 // GET TASKS WITH PAGINATION + FILTER
-export const getTasksService = async (userId, page = 1, limit = 10, status=null, search=null) => {
+export const getTaskService = async (userId, page = 1, limit = 10, status=null, search=null) => {
   const offset = (page - 1) * limit;  
   
   // filter kalo ada status, panggil filter
-  const tasks = await getTasksByUserIdPaginated(userId, limit, offset, status, search);
-  const total = await countTasksByUserId(userId);
+  const task = await getTaskByUserIdPaginated(userId, limit, offset, status, search);
+  const total = await countTaskByUserId(userId);
   
   return {
-    tasks,
+    task,
     pagination: {
       page,
       limit,
@@ -143,11 +143,11 @@ export const setDeadlineTaskService = async (taskId, userId, deadline_at) => {
 export const getTaskByDeadlineService = async (userId, page = 1, limit = 10) => {
   const offset = (page - 1) * limit;
   
-  const tasks = await getTaskByDeadline(userId, limit, offset);
-  const total = await countTasksWithDeadline(userId);
+  const task = await getTaskByDeadline(userId, limit, offset);
+  const total = await countTaskWithDeadline(userId);
   
   return {
-    tasks,
+    task,
     pagination: {
       page,
       limit,

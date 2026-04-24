@@ -1,7 +1,7 @@
 import express from "express";
 import {
   getAllUsers,
-  getAllTasks,
+  getAllTask,
   deleteUser,
   createAdmin,
   getUserById,
@@ -32,7 +32,7 @@ router.get("/users/:id", getUserById);                       // by id
 router.get("/users", getAllUsers);                           // all users
 
 // TASK ROUTES
-router.get("/tasks", getAllTasks);
+router.get("/task", getAllTask);
 
 // ADMIN DASHBOARD STATS
 router.get("/dashboard", authMiddleware, adminMiddleware, getDashboardStats);
