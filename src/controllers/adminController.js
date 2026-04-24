@@ -30,7 +30,7 @@ export const createAdmin = async (req, res) => {
   }
 };
 
-// GET USER BY USERNAME
+// GET USERS BY USERNAME
 export const getUserByUsername = async (req, res) => {
   try {
     const { username } = req.params;

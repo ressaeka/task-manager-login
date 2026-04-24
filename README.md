@@ -15,10 +15,10 @@ Task Manager API adalah backend RESTful API untuk aplikasi manajemen task (todo 
 ### Authentication & Authorization
 - ✅ Register & Login dengan JWT
 - ✅ Password hashing dengan bcrypt
-- ✅ Role-based access (User & Admin)
+- ✅ Role-based access (Users & Admin)
 - ✅ Middleware untuk proteksi route
 
-### Task Management (User)
+### Task Management (Users)
 - ✅ Create task baru
 - ✅ Read semua task milik sendiri (dengan pagination)
 - ✅ Read detail task by ID
@@ -31,7 +31,7 @@ Task Manager API adalah backend RESTful API untuk aplikasi manajemen task (todo 
 - ✅ Manage semua users (CRUD)
 - ✅ Manage semua task (Read only)
 - ✅ Search users by username
-- ✅ Filter users by role (user/admin)
+- ✅ Filter users by role (users /admin)
 - ✅ Filter task by status
 - ✅ Pagination untuk users & task
 - ✅ Create admin baru
