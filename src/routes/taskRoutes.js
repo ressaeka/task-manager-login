@@ -17,7 +17,7 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// TASKS
+// TASK
 router.post("/task", authMiddleware, createTask);
 router.get("/task", authMiddleware, getTask);
 router.get("/:id", authMiddleware, getTaskById);  

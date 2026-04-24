@@ -24,16 +24,16 @@ Task Manager API adalah backend RESTful API untuk aplikasi manajemen task (todo 
 - ✅ Read detail task by ID
 - ✅ Update task (title, description, status)
 - ✅ Delete task
-- ✅ Filter tasks by status (pending, in-progress, done)
+- ✅ Filter task by status (pending, in-progress, done)
 - ✅ Validasi input task
 
 ### Admin Dashboard
 - ✅ Manage semua users (CRUD)
-- ✅ Manage semua tasks (Read only)
+- ✅ Manage semua task (Read only)
 - ✅ Search users by username
 - ✅ Filter users by role (user/admin)
-- ✅ Filter tasks by status
-- ✅ Pagination untuk users & tasks
+- ✅ Filter task by status
+- ✅ Pagination untuk users & task
 - ✅ Create admin baru
 
 ###  Security Features

@@ -19,7 +19,7 @@ export const validateUsernamePassword = ({ username, password }) => {
   }
 };
 
-// VALIDASI TASKS
+// VALIDASI TASK
 export const validateTask = ({ title, description }) => {
     if (!title) {
         throw new Error("title harus diisi");
@@ -34,7 +34,7 @@ export const validateTask = ({ title, description }) => {
     }
 };
 
-// VALIDASI UPDATE TASKS
+// VALIDASI UPDATE TASK
 export const validateUpdateTask = ({ title, description, status }) => {
     if (title !== undefined && title.trim() === "") {
         throw new Error("title tidak boleh kosong.");

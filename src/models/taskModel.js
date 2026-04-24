@@ -175,7 +175,7 @@ export const setDeadlineTask = async (taskId, userId, deadline_at) => {
   return result.rows[0] ?? null;
 };
 
-// GET TASKS BY DEADLINE (URUT TERDEKAT)
+// GET TASK BY DEADLINE (URUT TERDEKAT)
 export const getTaskByDeadline = async (userId, limit, offset) => {
   const result = await pool.query(
     `SELECT id, public_id, title, description, status, deadline_at, created_at, updated_at

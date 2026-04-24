@@ -85,7 +85,7 @@ export const findUserById = async (userId) => {
   return user;
 };
 
-// GET TASKS WITH PAGINATION
+// GET TASK WITH PAGINATION
 export const getAllTaskService = async (page = 1, limit = 10, status = null, search=null) => {
   const offset = (page - 1) * limit;
 

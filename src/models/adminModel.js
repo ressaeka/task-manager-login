@@ -67,7 +67,7 @@ export const findAllTaskPaginated = async (limit, offset, status = null, search=
   let query = `
     SELECT t.id, t.public_id, t.title, t.description, t.status, 
            t.user_id, t.created_at, t.updated_at, u.username
-    FROM tasks t
+    FROM task t
     JOIN users u ON u.id = t.user_id 
     WHERE t.deleted_at IS NULL 
   `;
@@ -96,7 +96,7 @@ export const findAllTaskPaginated = async (limit, offset, status = null, search=
 };
 
 export const countTotalTask = async (status = null, search=null) => {
-  let query = `SELECT COUNT(*) FROM tasks WHERE 1=1`; 
+  let query = `SELECT COUNT(*) FROM task WHERE 1=1`; 
   const values = [];
 
   if (status) {
@@ -116,21 +116,21 @@ export const countTotalTask = async (status = null, search=null) => {
 // DASHBOARD STATS 
 export const countPendingTask = async () => {
   const result = await pool.query(
-    `SELECT COUNT(*) FROM tasks WHERE status = 'pending'`
+    `SELECT COUNT(*) FROM task WHERE status = 'pending'`
   );
   return parseInt(result.rows[0].count);
 };
 
 export const countInProgressTask = async () => {
   const result = await pool.query(
-    `SELECT COUNT(*) FROM tasks WHERE status = 'in-progress'`
+    `SELECT COUNT(*) FROM task WHERE status = 'in-progress'`
   );
   return parseInt(result.rows[0].count);
 };
 
 export const countCompletedTask = async () => {
   const result = await pool.query(
-    `SELECT COUNT(*) FROM tasks WHERE status = 'done'`
+    `SELECT COUNT(*) FROM task WHERE status = 'done'`
   );
   return parseInt(result.rows[0].count);
 };

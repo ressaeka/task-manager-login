@@ -109,7 +109,7 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-// GET TASKS 
+// GET TASK
 export const getAllTask = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -130,7 +130,7 @@ export const getAllTask = async (req, res) => {
 
     const result = await getAllTaskService(page, limit, status, search);
 
-    return successResponse(res, result, "Berhasil mengambil semua tasks", 200);
+    return successResponse(res, result, "Berhasil mengambil semua task", 200);
   } catch (err) {
     return serverErrorResponse(res, err.message, 500);
   }

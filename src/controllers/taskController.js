@@ -201,8 +201,8 @@ export const getDeletedTask = async (req, res) => {
       return errorResponse(res, "Unauthorized", 401);
     }
     
-    const tasks = await getDeleteTaskService(req.user.id);
-    return successResponse(res, { tasks }, "Berhasil mengambil task yang dihapus", 200);
+    const task = await getDeleteTaskService(req.user.id);
+    return successResponse(res, { task }, "Berhasil mengambil task yang dihapus", 200);
   } catch (err) {
     return serverErrorResponse(res, err.message, 500);
   }
@@ -243,7 +243,7 @@ export const setDeadlineTask = async (req, res) => {
   }
 };
 
-// GET TASKS BY DEADLINE (URUT TERDEKAT)
+// GET TASK BY DEADLINE (URUT TERDEKAT)
 export const getTaskByDeadline = async (req, res) => {
   try {
     if (!req.user) {
@@ -255,9 +255,9 @@ export const getTaskByDeadline = async (req, res) => {
 
     const result = await getTaskByDeadlineService(req.user.id, page, limit);
 
-    let message = "Berhasil mengambil tasks berdasarkan deadline";
-    if (result.tasks.length === 0) {
-      message = "Tidak ada tasks dengan deadline";
+    let message = "Berhasil mengambil task berdasarkan deadline";
+    if (result.task.length === 0) {
+      message = "Tidak ada task dengan deadline";
     }
 
     return successResponse(res, result, message, 200);

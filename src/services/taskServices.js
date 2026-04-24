@@ -13,7 +13,7 @@ import {
   getTaskByDeadline,
   getTaskDeadlineToday,
   countTaskWithDeadline,
-} from "../models/tasksModel.js";
+} from "../models/taskModel.js";
 
 // CREATE TASK
 export const createTaskService = async ({ title, description,deadline_at, userId }) => {
@@ -28,7 +28,7 @@ export const createTaskService = async ({ title, description,deadline_at, userId
   });
 };
 
-// GET TASKS WITH PAGINATION + FILTER
+// GET TASK WITH PAGINATION + FILTER
 export const getTaskService = async (userId, page = 1, limit = 10, status=null, search=null) => {
   const offset = (page - 1) * limit;  
   
@@ -139,7 +139,7 @@ export const setDeadlineTaskService = async (taskId, userId, deadline_at) => {
   return await setDeadlineTask(taskId, userId, deadline_at);
 };
 
-// GET TASKS BY DEADLINE SERVICE (URUT TERDEKAT)
+// GET TASK BY DEADLINE SERVICE (URUT TERDEKAT)
 export const getTaskByDeadlineService = async (userId, page = 1, limit = 10) => {
   const offset = (page - 1) * limit;
   
@@ -157,7 +157,7 @@ export const getTaskByDeadlineService = async (userId, page = 1, limit = 10) => 
   };
 };
 
-// GET TASKS DEADLINE TODAY SERVICE
+// GET TASK DEADLINE TODAY SERVICE
 export const getTaskDeadlineTodayService = async (userId) => {
   return await getTaskDeadlineToday(userId);
 };
