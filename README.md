@@ -63,10 +63,9 @@ Task Manager API adalah backend RESTful API untuk aplikasi manajemen task (todo 
 - **Password:** bcrypt
 - **Validation:** Custom validators
 - **Rate Limiting:** express-rate-limit
-- **Caching/Blacklist:** Redis (optional)
 
 ### Tools & Testing
-- **Testing:** Jest & Supertest
+- **Testing:** Jest & Supertest(MASIH BELUM)
 - **Linting:** ESLint
 - **Formatting:** Prettier
 - **Version Control:** Git
