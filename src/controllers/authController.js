@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   successResponse,
   errorResponse,
@@ -50,7 +51,6 @@ export const getProfile = async (req, res) => {
 
     const user = await getUserProfileServices(userId)
 
-    // eslint-disable-next-line no-unused-vars
     const { password, ...safeUser} = user;
 
     return successResponse(res, safeUser, "Berhasil Mengambil Profile")
