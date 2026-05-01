@@ -35,7 +35,7 @@ export const getTaskByUserId = async (userId) => {
 // - Filter by status (pending, in-progress, done)
 // - Search by title (ILIKE)
 // Hanya task yang belum di-soft delete (deleted_at IS NULL)
-export const getTaskByUserIdPaginated = async (userId, limit, offset, status = null, search = null) => {
+export const getTaskByUserIdPaginated = async (userId, limit, offset, status = null, search = null, sort = 'createad_at', order = 'decs') => {
   let query = `
     SELECT id, public_id, title, description, status, deadline_at, created_at, updated_at
     FROM task
@@ -58,8 +58,16 @@ export const getTaskByUserIdPaginated = async (userId, limit, offset, status = n
     paramCount++;
   }
 
-  query += ` ORDER BY created_at DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
+  //sorting (validasi kolom yang boleh di sort)
+  const allowedSortColumns = ['created_at', 'title', 'status', 'deadline_at', 'updated_at'];
+  const sortColumn = allowedSortColumns.includes(sort) ? sort : 'created_at';
+
+  //validasi order
+  const sortOrder = (order === 'asc' || order === 'desc') ? order : 'desc';
+
+  query += ` ORDER BY ${sortColumn} ${sortOrder} LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
   values.push(limit, offset);
+  
   const result = await pool.query(query, values);
   return result.rows;
 };

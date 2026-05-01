@@ -74,7 +74,7 @@ export const countTotalUsers = async (role = null, public_id = null) => {
 // Mengambil semua task dari semua user (admin view)
 // Support: pagination (limit, offset), filter status, search by title
 // Join dengan users untuk mendapatkan username
-export const findAllTaskPaginated = async (limit, offset, status = null, search = null) => {
+export const findAllTaskPaginated = async (limit, offset, status = null, search = null, sort = 'created_at', order = 'desc') => {
   let query = `
     SELECT t.id, t.public_id, t.title, t.description, t.status, 
            t.user_id, t.created_at, t.updated_at, u.username
@@ -97,8 +97,13 @@ export const findAllTaskPaginated = async (limit, offset, status = null, search 
     values.push(`%${search}%`);
   }
 
+  const allowedSortColumns = ['created_at', 'title', 'status', 'deadline_at', 'updated_at']
+  const sortColumn = allowedSortColumns.includes(sort) ? sort : 'created_at';
+  const sortOrder =(order === 'asc' || order === 'desc') ? order : 'desc'
+
+
   // Pagination
-  query += ` ORDER BY t.created_at DESC LIMIT $${paramCount++} OFFSET $${paramCount}`;
+  query += ` ORDER BY t.${sortColumn} ${sortOrder} LIMIT $${paramCount++} OFFSET $${paramCount}`;
   values.push(limit, offset);
 
   const result = await pool.query(query, values);

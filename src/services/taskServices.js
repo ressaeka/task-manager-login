@@ -29,12 +29,12 @@ export const createTaskService = async ({ title, description,deadline_at, userId
 };
 
 // GET TASK WITH PAGINATION + FILTER
-export const getTaskService = async (userId, page = 1, limit = 10, status=null, search=null) => {
+export const getTaskService = async (userId, page = 1, limit = 10, status=null, search=null, sort = 'created_at', order = 'desc') => {
   const offset = (page - 1) * limit;  
   
   // filter kalo ada status, panggil filter
-  const task = await getTaskByUserIdPaginated(userId, limit, offset, status, search);
-  const total = await countTaskByUserId(userId);
+  const task = await getTaskByUserIdPaginated(userId, limit, offset, status, search, sort, order);
+  const total = await countTaskByUserId(userId, status, search);
   
   return {
     task,
@@ -44,7 +44,8 @@ export const getTaskService = async (userId, page = 1, limit = 10, status=null, 
       total,
       totalPages: Math.ceil(total / limit),
       ...(status && { filter: { status } } ),
-      ...(search && { filter: { search } } )
+      ...(search && { filter: { search } } ),
+      sort:{by: sort, order:order}  // menambahkan info sorting
     }
   };
 };

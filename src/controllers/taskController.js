@@ -51,6 +51,8 @@ export const getTask = async (req, res) => {
     const limit = parseInt (req.query.limit) || 10;
     const status = req.query.status;
     const search = req.query.search;
+    const sort = req.query.sort || 'created_at';
+    const order = req.query.order || 'desc';
 
     if(page < 1){
       return errorResponse(res, "Page minimal 1", 400);
@@ -64,7 +66,19 @@ export const getTask = async (req, res) => {
       return errorResponse(res, "Status harus pending, in-progress, atau done", 400)
     }
 
-    const result = await getTaskService(req.user.id, page, limit, status, search);
+    // VALIDASI SORT (kolom yang boleh di-sort)
+    const allowedSortColumns = ['created_at', 'title', 'status', 'deadline_at', 'updated_at'];
+
+    if(!allowedSortColumns.includes(sort)){
+      return errorResponse(res, `Sort harus salah satu dari : ${allowedSortColumns.join(', ')}`, 400)
+    }
+
+    // validasi order
+    if(order && !['asc', 'desc'].includes(order)){
+      return errorResponse(res, "Order harus 'asc' atau 'desc'", 400)
+    }
+
+    const result = await getTaskService(req.user.id, page, limit, status, search, sort ,order);
 
     return successResponse(res, result , "Berhasil mengambil task");
   } catch (err) {

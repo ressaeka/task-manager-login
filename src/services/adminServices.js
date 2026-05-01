@@ -86,11 +86,11 @@ export const findUserById = async (userId) => {
 };
 
 // GET TASK WITH PAGINATION
-export const getAllTaskService = async (page = 1, limit = 10, status = null, search=null) => {
+export const getAllTaskService = async (page = 1, limit = 10, status = null, search=null, sort ='created_at', order = 'desc') => {
   const offset = (page - 1) * limit;
 
-  const task = await findAllTaskPaginated(limit, offset, status, search);
-  const total = await countTotalTask(status);  
+  const task = await findAllTaskPaginated(limit, offset, status, search, sort, order);
+  const total = await countTotalTask(status, search);  
 
   return {
     task,
@@ -100,7 +100,8 @@ export const getAllTaskService = async (page = 1, limit = 10, status = null, sea
       total,
       totalPages: Math.ceil(total / limit),
       ...(status && { filter: { status } }),
-      ...(search && { filter: { search } })
+      ...(search && { filter: { search } }),
+      sort: {by: sort, order: order} // menambahkan info sorting
 
     }
   };

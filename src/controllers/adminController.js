@@ -116,6 +116,9 @@ export const getAllTask = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const status = req.query.status;
     const search = req.query.search;
+    const sort = req.query.sort || 'created_at';
+    const order = req.query.order || 'desc';
+
 
     if(page < 1) {
       return errorResponse(res, "Page minimal 1", 400);
@@ -128,7 +131,14 @@ export const getAllTask = async (req, res) => {
       return errorResponse(res, "Status harus pending, in-progress, atau done", 400);
     }
 
-    const result = await getAllTaskService(page, limit, status, search);
+    //validasi sort
+    const allowedSortColumns = ['created_at', 'title', 'status', 'deadline_at', 'updated_at'];
+
+    if(!allowedSortColumns.includes(sort)){
+      return errorResponse(res, "Order harus 'asc' atau 'desc'", 400)
+    }
+
+    const result = await getAllTaskService(page, limit, status, search, sort, order);
 
     return successResponse(res, result, "Berhasil mengambil semua task", 200);
   } catch (err) {

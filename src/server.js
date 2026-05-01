@@ -1,4 +1,4 @@
-import app from "../src/app.js";
+import app from "./app.js";
 
 const port = process.env.PORT || 3000;
 const host = process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost";
