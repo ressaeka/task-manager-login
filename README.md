@@ -77,7 +77,6 @@ Task Manager API adalah backend RESTful API untuk aplikasi manajemen task (todo 
 - Node.js v18+
 - PostgreSQL v14+
 - npm atau yarn
-- Redis (optional, untuk logout blacklist)
 
 ### Langkah-langkah
 
