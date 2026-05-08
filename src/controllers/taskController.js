@@ -22,7 +22,7 @@ import { validateTask, validateUpdateTask } from "../validators/index.js";
 export const createTask = async (req, res) => {
     try {
       if (!req.user) {
-        return errorResponse(res, "Unauthorized", 401);
+        return errorResponse(res, "Unauthorized", 400);
       }
 
       validateTask(req.body);
