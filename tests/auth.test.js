@@ -20,7 +20,9 @@ describe("AUTH TESTING", () => {
     username = "ressa",
     password = "Password123!",
   ) => {
-    return request(app).post("/auth/register").send({ username, password });
+    return request(app)
+        .post("/auth/register")
+        .send({ username, password });
   };
 
   const loginUser = async (
