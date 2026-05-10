@@ -98,7 +98,7 @@ export const getAllUsers = async (req, res) => {
       message = `Berhasil mengambil user dengan role: ${role}`
     }
     
-    const result = await getAllUsersService(page, limit, role,public_id);
+    const result = await getAllUsersService(page, limit, role, public_id);
     
     if (public_id && result.users.length === 0) {
       return errorResponse(res, `User dengan public_id : ${public_id} tidak ditemukan`, 404);
@@ -119,7 +119,6 @@ export const getAllTask = async (req, res) => {
     const sort = req.query.sort || 'created_at';
     const order = req.query.order || 'desc';
 
-
     if(page < 1) {
       return errorResponse(res, "Page minimal 1", 400);
     }
@@ -135,7 +134,11 @@ export const getAllTask = async (req, res) => {
     const allowedSortColumns = ['created_at', 'title', 'status', 'deadline_at', 'updated_at'];
 
     if(!allowedSortColumns.includes(sort)){
-      return errorResponse(res, "Order harus 'asc' atau 'desc'", 400)
+      return errorResponse(res, `Sort harus salah satu dari: ${allowedSortColumns.join(', ')}`, 400);
+    }
+
+    if(order && !['asc', 'desc'].includes(order)){
+      return errorResponse(res, "Order harus 'asc' atau 'desc'", 400);
     }
 
     const result = await getAllTaskService(page, limit, status, search, sort, order);
@@ -194,7 +197,6 @@ export const softDeleteUser = async (req, res) => {
 export const restoreUser = async (req, res) => {
   try {
     const userId = Number(req.params.id);
-    console.log(req.params.id)
 
     if(isNaN(userId) || userId <= 0){
       return errorResponse(res, "ID user tidak valid", 400);

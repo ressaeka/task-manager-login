@@ -35,13 +35,13 @@ router.get("/users", getAllUsers);                           // all users
 router.get("/task", getAllTask);
 
 // ADMIN DASHBOARD STATS
-router.get("/dashboard", authMiddleware, adminMiddleware, getDashboardStats);
+router.get("/dashboard", getDashboardStats);
 
 // DELETE USER
 router.delete("/users/:id", deleteUser);
 
 // DELETE USER ( SOFT DELETE )
-router.delete("/users/:id/soft", authMiddleware, adminMiddleware, softDeleteUser)
-router.post("/users/:id/restore", authMiddleware, adminMiddleware, restoreUser);
+router.delete("/users/:id/soft", softDeleteUser)
+router.post("/users/:id/restore", restoreUser);
 
 export default router;

@@ -114,7 +114,7 @@ export const restoreTaskService = async (taskId, userId) => {
 };
 
 // get soft delete 
-export const getDeleteTaskService = async (userId) => {
+export const getDeletedTaskService = async (userId) => {
   return await getDeleteTaskByUserId(userId);
 };
 

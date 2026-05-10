@@ -101,7 +101,7 @@ export const countTaskByUserId = async (userId, status=null, search = null) => {
 // Digunakan untuk operasi update, delete, soft delete, restore
 export const findTaskById = async (taskId, userId) => {
   const result = await pool.query(
-    `SELECT id, public_id, title, description, deadline_at, status, created_at, updated_at, deleted_at , expires_at
+    `SELECT id, public_id, title, description, deadline_at, status, created_at, updated_at, deleted_at , deleted_expires_at
      FROM task
      WHERE id = $1 AND user_id = $2`,
     [taskId, userId],

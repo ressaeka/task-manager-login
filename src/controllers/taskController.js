@@ -5,7 +5,7 @@ import {
   updateTaskService,
   softDeleteTaskService,
   restoreTaskService,
-  getDeleteTaskService,
+  getDeletedTaskService,
   deleteTaskService,
   setDeadlineTaskService,
   getTaskByDeadlineService,
@@ -22,7 +22,7 @@ import { validateTask, validateUpdateTask } from "../validators/index.js";
 export const createTask = async (req, res) => {
     try {
       if (!req.user) {
-        return errorResponse(res, "Unauthorized", 400);
+        return errorResponse(res, "Unauthorized", 401);
       }
 
       validateTask(req.body);
@@ -215,8 +215,8 @@ export const getDeletedTask = async (req, res) => {
       return errorResponse(res, "Unauthorized", 401);
     }
     
-    const task = await getDeleteTaskService(req.user.id);
-    return successResponse(res, { task }, "Berhasil mengambil task yang dihapus", 200);
+    const task = await getDeletedTaskService(req.user.id);  
+    return successResponse(res, { task }, "Berhasil mengambil task yang dihapus", 200);  
   } catch (err) {
     return serverErrorResponse(res, err.message, 500);
   }
