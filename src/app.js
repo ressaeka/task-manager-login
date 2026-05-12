@@ -6,17 +6,22 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import { apiLimiter } from "./middlewares/rateLimiter.js"; 
 import "./config/db.js";
 
+// instance dari Express
 const app = express();
 
+// parsing JSON dari request body
 app.use(express.json());
 
 //global rate limiter
 app.use(apiLimiter)
 
-app.use("/auth", authRoutes);
-app.use("/task", taskRoutes);
-app.use("/admin", adminRoutes);
+// routes
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/task", taskRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
+// error handling
 app.use(errorHandler);
 
+// export app ke server.js
 export default app;
